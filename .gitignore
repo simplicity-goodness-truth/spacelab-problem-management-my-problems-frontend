@@ -1,0 +1,12 @@
+node_modules/
+dist/
+sapui5-rt-1.71.53/
+.scp/
+.env
+Makefile*.mta
+mta_archives
+mta-*
+resources
+archive.zip
+.*_mta_build_tmp
+.rar

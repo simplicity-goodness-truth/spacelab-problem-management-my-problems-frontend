@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZSL_SLPM_SRV" xml:lang="ru" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="Problem" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Guid"/>
+                </Key>
+                <Property Name="RequestorDepartment" Type="Edm.String" Nullable="false" MaxLength="60" sap:unicode="false" sap:label="Логическая система" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="RequestorLogin" Type="Edm.String" Nullable="false" MaxLength="60" sap:unicode="false" sap:label="Логическая система" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PostingDate" Type="Edm.DateTime" Precision="0" sap:unicode="false" sap:label="Дата" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Processor" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Знаковое поле длиной 10" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="RequestorFullName" Type="Edm.String" Nullable="false" MaxLength="80" sap:unicode="false" sap:label="Char80" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProcessorFullName" Type="Edm.String" Nullable="false" MaxLength="80" sap:unicode="false" sap:label="Char80" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="60" sap:unicode="false" sap:label="Логическая система" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ObjectId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Номер операции" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="StatusText" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="30 знаков" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="R/2-таблица" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CreatedBy" Type="Edm.String" Nullable="false" MaxLength="60" sap:unicode="false" sap:label="Логическая система" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PriorityText" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Сhar" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Priority" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Приоритет" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Note" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="Конфигурация предупреждений: символьная строка" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ChangedAt" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Дата создания" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SupportTeam" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Деловой партнер" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CreatedAt" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Дата создания" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Guid" Type="Edm.Guid" Nullable="false" sap:unicode="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <NavigationProperty Name="Text" Relationship="ZSL_SLPM_SRV.ProblemToText" FromRole="FromRole_ProblemToText" ToRole="ToRole_ProblemToText"/>
+            </EntityType>
+            <EntityType Name="Text" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Tdname"/>
+                    <PropertyRef Name="Tdobject"/>
+                    <PropertyRef Name="Tdid"/>
+                </Key>
+                <Property Name="Tdname" Type="Edm.String" Nullable="false" MaxLength="70" sap:unicode="false" sap:label="Имя текста" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Tdobject" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="ТекстовОбъект" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Tdid" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="ИдТекста" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="RefGuid" Type="Edm.Guid" Nullable="false" sap:unicode="false" sap:label="GUID объекта" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Tdspras" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Язык" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TextString" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TdidTxt" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="Значение" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DateTimeText" Type="Edm.DateTime" Nullable="false" Precision="0" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="UserText" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Company" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Contactmobile" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Department" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Отдел" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Contactphone" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Email" Type="Edm.String" Nullable="false" MaxLength="241" sap:unicode="false" sap:label="Адрес эл. почты" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Emailsubject" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CompanyAdress" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ActionTextId" Type="Edm.String" Nullable="false" MaxLength="15" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <Association Name="ProblemToText" sap:content-version="1">
+                <End Type="ZSL_SLPM_SRV.Problem" Multiplicity="1" Role="FromRole_ProblemToText"/>
+                <End Type="ZSL_SLPM_SRV.Text" Multiplicity="*" Role="ToRole_ProblemToText"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ProblemToText">
+                        <PropertyRef Name="Guid"/>
+                    </Principal>
+                    <Dependent Role="ToRole_ProblemToText">
+                        <PropertyRef Name="RefGuid"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="ZSL_SLPM_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ProblemSet" EntityType="ZSL_SLPM_SRV.Problem" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="TextSet" EntityType="ZSL_SLPM_SRV.Text" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <AssociationSet Name="ProblemToText_AssocSet" Association="ZSL_SLPM_SRV.ProblemToText" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ProblemSet" Role="FromRole_ProblemToText"/>
+                    <End EntitySet="TextSet" Role="ToRole_ProblemToText"/>
+                </AssociationSet>
+            </EntityContainer>
+            <atom:link rel="self" href="http://sol.itkg.ru:8000/sap/opu/odata/sap/ZSL_SLPM_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="http://sol.itkg.ru:8000/sap/opu/odata/sap/ZSL_SLPM_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

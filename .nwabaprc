@@ -1,0 +1,12 @@
+{
+    "base": "./dist",
+    "conn_usestrictssl" : false,
+    "conn_server": "http://sol.itkg.ru:8000",
+    "conn_user": "kuznecov",
+    "conn_password": "Support200",
+    "conn_client" : "200", 
+    "abap_package": "ZSLPM",
+    "abap_transport":"SOLK900178",
+    "abap_bsp": "ZSLPMMYPRB",
+    "abap_bsp_text": "SpaceLab: My Problems"
+}
