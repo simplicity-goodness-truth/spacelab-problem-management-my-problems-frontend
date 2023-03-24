@@ -26,32 +26,6 @@
                 "FIORI_TOOLS_BACKEND_CONFIG": "[{\"path\":\"/sap\",\"url\":\"http://sol.itkg.ru:8000\",\"client\":\"200\"}]",
                 "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false"
             }
-        },
-        {
-            "name": "zslpmmyprb-flp",
-            "cwd": "${workspaceFolder}",
-            "runtimeArgs": [
-                "fiori",
-                "run"
-            ],
-            "type": "node",
-            "request": "launch",
-            "runtimeExecutable": "npx",
-            "args": [
-                "--open",
-                "test/flpSandbox.html"
-            ],
-            "windows": {
-                "runtimeExecutable": "npx.cmd"
-            },
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart",
-            "outputCapture": "std",
-            "env": {
-                "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"c:\\\\SpaceLab\\\\delivery\\\\spacelab_problem_management\\\\code\\\\sapui5\\\\zslpmmyprb\"}",
-                "FIORI_TOOLS_BACKEND_CONFIG": "[{\"path\":\"/sap\",\"url\":\"http://sol.itkg.ru:8000\",\"client\":\"200\"}]",
-                "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false"
-            }
         }
     ]
 }

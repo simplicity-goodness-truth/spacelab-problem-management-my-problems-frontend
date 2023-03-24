@@ -1,17 +1,71 @@
-<mvc:View controllerName="zslpmmyprb.controller.Detail" xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc" xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
-    <semantic:SemanticPage id="detailPage" busy="{detailView>/busy}" busyIndicatorDelay="{detailView>/delay}">
+<mvc:View controllerName="zslpmmyprb.controller.Detail" xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc" 
+xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
+    <semantic:SemanticPage id="detailPage" busy="{detailView>/busy}" busyIndicatorDelay="{detailView>/delay}"
+        showFooter="{= ${RequesterWithdrawEnabled} || ${RequesterUpdateEnabled} ||  ${RequesterConfirmEnabled} || ${RequesterReplyEnabled} ? true : false }">
         <semantic:titleHeading>
-            <Title text="{ObjectId}" level="H2" id="fieldTitle" />
+            <Title text="{ObjectId}: {Description}" level="H2" id="fieldTitle" />
         </semantic:titleHeading>
-        <semantic:headerContent>
-            <ObjectAttribute xmlns="sap.m" text="{Description}" id="fieldDescription" />
-            <ObjectAttribute xmlns="sap.m" text="{StatusText}" id="fieldStatus" />
-            <ObjectAttribute xmlns="sap.m" text="{PriorityText}" id="fieldPriority" />
+        <semantic:headerContent>            
+            <ObjectAttribute xmlns="sap.m" text="{i18n>problemStatusTitle}: {StatusText}" id="fieldStatus" />
+            <ObjectAttribute xmlns="sap.m" text="{i18n>problemPriorityTitle}: {PriorityText}" id="fieldPriority" />
         </semantic:headerContent>
         <semantic:content>
             <IconTabBar id="iconTabBar">
-                <items>
-                    <IconTabFilter id="tabDetails" icon="sap-icon://business-card" tooltip="{i18n>detailIconTabBarText}" text="{i18n>detailIconTabBarText}">
+                <items>                                
+                    <IconTabFilter id="tabCommunication" icon="sap-icon://comment" tooltip="{i18n>communicationIconTabBarText}" text="{i18n>communicationIconTabBarText}">
+                        <content>
+                            <TextArea id="communicationTabTextInputArea" value="" width="100%" rows="15" visible="{= ${runtimeModel>/editModeActive} ? true: false }"/>
+                            
+                                <List id="textsList" showSeparators="Inner" busyIndicatorDelay="0"
+                                items="{path: 'Text', 
+                                    filters: [
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SU01'},
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SU99'},
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SURS'},
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SUSO'},
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SUBI'}
+                                        ]
+                                }">
+                                <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{UserText}" timestamp="{DateTimeText}" text="{TextString}" sender="{TdidTxt}" />
+                            </List>
+                        </content>
+                    </IconTabFilter>
+
+                    <IconTabFilter id="tabAttachments" icon="sap-icon://attachment" tooltip="{i18n>attachmentsIconTabBarText}" text="{i18n>attachmentsIconTabBarText}">
+                        <content>
+                            <upload:UploadSet
+                            id="UploadSet"
+                            instantUpload="false"
+                            showIcons="true"
+                            uploadEnabled="{runtimeModel>/editModeActive}"
+                            terminationEnabled="true"
+                            fileTypes="jpeg,csv,txt,doc,png,docx,xlsx,jpg,pdf"
+                            maxFileNameLength="255"
+                            maxFileSize="10"
+                            mediaTypes="application/pdf,text/plain,application/msword,image/png,text/csv,text/html,application/zip,image/jpeg"
+                            items="{Attachment}"
+                            beforeUploadStarts="onBeforeUploadStarts"
+                            uploadCompleted="onUploadCompleted"
+                            afterItemAdded="onAfterItemAdded"
+                            noDataDescription="{i18n>noAttachmentsDescription}"
+                            noDataText="{i18n>noAttachmentsText}"
+                        >
+                                <upload:toolbar>
+                                    <OverflowToolbar id="OverflowToolbar">
+                                        <ToolbarSpacer id="ToolbarSpacer" />
+                                    </OverflowToolbar>
+                                </upload:toolbar>
+                                <upload:items>                        
+                                                
+                                    <upload:UploadSetItem id="UploadSetItem" fileName="{Name}" mediaType="{Mimetype}" url="{DocumentId}"
+                                        visibleEdit="false" visibleRemove="false" enabledRemove="false" openPressed="onFileNamePress"  />
+                                </upload:items>
+                            </upload:UploadSet>
+                        </content>
+                    </IconTabFilter>
+
+
+                        <IconTabFilter id="tabDetails" icon="sap-icon://business-card" tooltip="{i18n>detailIconTabBarText}" text="{i18n>detailIconTabBarText}">
                         <content>
                             <Table xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic" xmlns:footerbar="sap.ushell.ui.footerbar" xmlns="sap.m" id="tableProblemDetails" inset="false">
                                 <columns>
@@ -45,13 +99,7 @@
                                     <ColumnListItem id="tableProblemDetailsItemCreationDate">
                                         <cells>
                                             <Text text="{i18n>creationDateTitle}" width="100%" id="tableProblemDetailsLabelCreationDate" />
-                                            <Text text="{ path: 'CreationDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy' }}" width="100%" id="tableProblemDetailsFieldCreationDate" />
-                                        </cells>
-                                    </ColumnListItem>
-                                    <ColumnListItem id="tableProblemDetailsItemRequestorLogin">
-                                        <cells>
-                                            <Text text="{i18n>requesterUserTitle}" width="100%" id="tableProblemDetailsLabelRequestorLogin" />
-                                            <Text text="{RequestorLogin}" width="100%" id="tableProblemDetailsFieldRequestorLogin" />
+                                            <Text text="{CreatedAt}" width="100%" id="tableProblemDetailsFieldCreationDate" />
                                         </cells>
                                     </ColumnListItem>
                                     <ColumnListItem id="tableProblemDetailsItemRequestorName">
@@ -97,44 +145,7 @@
                             </Table>
                         </content>
                     </IconTabFilter>
-                    <IconTabFilter id="tabAttachments" icon="sap-icon://attachment" tooltip="{i18n>attachmentsIconTabBarText}" text="{i18n>attachmentsIconTabBarText}">
-                        <content>
-                            <upload:UploadSet
-                                id="UploadSet"
-                                instantUpload="false"
-                                showIcons="true"
-                                uploadEnabled="true"
-                                terminationEnabled="true"
-                                fileTypes="jpeg,csv,txt,doc,png,docx,xlsx,jpg,pdf"
-                                maxFileNameLength="255"
-                                maxFileSize="10"
-                                mediaTypes="application/pdf,text/plain,application/msword,image/png,text/csv,text/html,application/zip,image/jpeg"
-                                items="{Attachment}"
-                                beforeUploadStarts="onBeforeUploadStarts"
-                                uploadCompleted="onUploadCompleted"
-                                afterItemAdded="onAfterItemAdded"
-                                noDataDescription="{i18n>noAttachmentsDescription}"
-                                noDataText="{i18n>noAttachmentsText}"
-                            >
-                                <upload:toolbar>
-                                    <OverflowToolbar id="OverflowToolbar">
-                                        <ToolbarSpacer id="ToolbarSpacer" />
-                                    </OverflowToolbar>
-                                </upload:toolbar>
-                                <upload:items>
-                                    <upload:UploadSetItem id="UploadSetItem" fileName="{Name}" mediaType="{Mimetype}" url="{DocumentId}" visibleEdit="false" openPressed="onFileNamePress" removePressed="onAttachmentRemovalPress" />
-                                </upload:items>
-                            </upload:UploadSet>
-                        </content>
-                    </IconTabFilter>
-                    <IconTabFilter id="tabCommunication" icon="sap-icon://comment" tooltip="{i18n>communicationIconTabBarText}" text="{i18n>communicationIconTabBarText}">
-                        <content>
-                            <FeedInput placeholder="{i18n>postCommentPlaceHolder}" buttonTooltip="Post" id="replyTextInput" post="onPressPostText" showIcon="false" />
-                            <List id="textsList" showSeparators="Inner" busyIndicatorDelay="0" items="{path: 'Text'}">
-                                <FeedListItem id="communicationItem" iconDensityAware="false" icon="sap-icon://employee" info="{UserText}" timestamp="{DateTimeText}" text="{TextString}" sender="{TdidTxt}" />
-                            </List>
-                        </content>
-                    </IconTabFilter>
+                    
                 </items>
             </IconTabBar>
         </semantic:content>
@@ -145,9 +156,14 @@
             <semantic:ExitFullScreenAction id="exitFullScreen" visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}" press=".toggleFullScreen" />
         </semantic:exitFullScreenAction>
         <semantic:footerCustomActions>
-            <Button text="{i18n>buttonWithdraw}" press="onPressWithdraw" id="buttonWithdraw" visible="{WithdrawEnabled}"/>
-            <Button text="{i18n>buttonConfirm}" press="onPressConfirm" id="buttonConfirm" visible="{ConfirmEnabled}"/>
-            <Button text="{i18n>buttonSaveAndReply}" press="onPressSaveAndReply" id="buttonSaveAndReply" visible="{ReplyEnabled}"/>
+            <Button text="{i18n>buttonRequesterWithdraw}" press="onPressRequesterWithdraw" id="buttonRequesterWithdraw" visible="{= ${RequesterWithdrawEnabled}  ? true : false }"/>
+            <Button text="{i18n>buttonRequesterUpdate}" press="onPressRequesterUpdate" id="buttonRequesterUpdate"  visible="{= ${RequesterUpdateEnabled}  ? true : false }"/>
+            <Button text="{i18n>buttonRequesterConfirm}" press="onPressRequesterConfirm" id="buttonRequesterConfirm"   visible="{= ${RequesterConfirmEnabled}  ? true : false }"/>
+            <Button text="{i18n>buttonRequesterReply}" press="onPressRequesterReply" id="buttonRequesterReply"   
+                visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterReplyEnabled} ? true: false }"/>
+                
+            <Button text="{i18n>buttonRequesterSaveAndReply}" press="onPressRequesterSaveAndReply" id="buttonRequesterSaveAndReply"   visible="{= ${runtimeModel>/editModeActive} ? true : false }"/>
+            <Button text="{i18n>buttonRequesterExitFromReplyMode}" press="onPressRequesterExitFromReplyMode" id="buttonRequesterExitFromReplyMode"  visible="{= ${runtimeModel>/editModeActive} ? true : false }"/>
         </semantic:footerCustomActions>
     </semantic:SemanticPage>
 </mvc:View>

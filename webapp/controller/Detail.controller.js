@@ -10,6 +10,15 @@ const textTypes = Object.freeze(
         static businessConsequences = 'SUBI';
     });
 
+const statusNames = Object.freeze(
+    class statusNames {
+        static inProcess = 'E0002';
+        static customerAction = 'E0003';
+        static solutionProvided = 'E0005';
+        static confirmed = 'E0008';
+        static withdrawn = 'E0010';
+    });
+
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -41,179 +50,138 @@ sap.ui.define([
             });
 
             this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
-
             this.setModel(oViewModel, "detailView");
-
             this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
 
+            // Event bus for events publishing
+            this.oEventBus = sap.ui.getCore().getEventBus();
+
+            //  Problem closure payload      
+            this.problemClosurePayload = {};
+
+            //  Runtime model
+            var oRuntimeModel = new JSONModel({
+                editModeActive: false
+            });
+            this.getOwnerComponent().setModel(oRuntimeModel, "runtimeModel");
 
         },
-
-        /**
-        * Upload all incomplete problem attachments at once in a cycle
-        */
-
-                uploadProblemAttachments: function (sGuid, callback) {
-
-                    var oUploadSet = this.byId("UploadSet"),
-                        sAttachmentUploadURL = "/ProblemSet(guid'" + sGuid + "')/Attachment",
-                        oItems = oUploadSet.getIncompleteItems();            
-                        oUploadSet.setUploadUrl(sharedLibrary.getODataPath(this) + sAttachmentUploadURL);
-        
-        
-                    for (var k = 0; k < oItems.length; k++) {
-        
-                        var oItem = oItems[k];
-                        var sFileName = oItem.getFileName();
-        
-        
-                        var oCustomerHeaderToken = new sap.ui.core.Item({
-                            key: "x-csrf-token",
-                            text: this.getModel().getSecurityToken()
-                        });
-        
-                        // Header slug to store a file name
-                        var oCustomerHeaderSlug = new sap.ui.core.Item({
-                            key: "slug",
-                            text: sFileName
-                        });
-        
-                        oUploadSet.addHeaderField(oCustomerHeaderToken);
-                        oUploadSet.addHeaderField(oCustomerHeaderSlug);
-                        oUploadSet.uploadItem(oItem);
-                        oUploadSet.removeAllHeaderFields();
-                    }
-        
-                    callback();
-                },
-
 
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
 
         /**
-        * Handler for a situation, when a comment posting button is pressed
+        * Requester pressed save in reply mode
         */
-        onPressPostText: function (oEvent) {
+        onPressRequesterSaveAndReply: function () {
 
-            // Getting text of a comment
+            var t = this;
 
-            var commentText = this.byId('replyTextInput').getValue();
-    
-            var oTextPayload = {},
-                t = this;
+            this._validateRequestersReply(function () {
 
-            // Executing post method for Text entity
+                t._executeRequesterReply();
 
-            if (commentText.length > 0) {
-
-                oTextPayload.Tdid = textTypes.reply;
-                oTextPayload.TextString = commentText;
-
-                sharedLibrary.createSubEntity("ProblemSet", this.Guid, "Text", oTextPayload,
-                null, this.getResourceBundle().getText("textCreationFailure"),
-                this, function () {
-
-                    t.getView().byId("textsList").getBinding("items").refresh();
-
-                });
-            }
-        },
-
-        /**
-        * Handler for a situation, when a Delete button is pressed against a file in UploadSet
-        */
-
-        onAttachmentRemovalPress: function (oEvent) {
-
-            // Preventing default action to display warning
-
-            oEvent.preventDefault();
-
-            var sAttachmentURL = oEvent.getSource().getBindingContext().sPath,
-                t = this;
-
-            // var oUploadSet = t.byId("UploadSet"),
-            //     oItemToDelete = oEvent.getParameter("item");
-            // oUploadSet.removeItem(oItemToDelete);
-
-            var sText = this.getResourceBundle().getText("confirmDeletionOfAttachment");
-
-            sharedLibrary.confirmAction(sText, function () {
-
-                t._deleteAttachment(sAttachmentURL, function () {
-
-                    t._refreshUploadSet();
-
-                    var sAttachmentDeletedMessage = t.getResourceBundle().getText("attachmentDeleted");
-                    sap.m.MessageBox.information(sAttachmentDeletedMessage);
-
-                });
             });
         },
 
         /**
-        * Handler for a situation, when a new file is added to UploadSet
+        * Requester pressed exit from reply mode
         */
+        onPressRequesterExitFromReplyMode: function () {
 
-        onAfterItemAdded: function (oEvent) {
-
-            this._startUpload();
+            this._deactivateEditMode();
 
         },
 
         /**
-        * Handler for a situation, when a new file is added to UploadSet but before upload starts
+        * Requester pressed Reply button 
         */
-        onBeforeUploadStarts: function (oEvent) {
+        onPressRequesterReply: function () {
+            this._activateEditMode();
 
-            this.byId("UploadSet").setUploadUrl(sharedLibrary.getODataPath(this) +
-                this._getProblemGuidPointer() + "/Attachment");
-
-            var oUploadSet = oEvent.getSource();
-            var oItemToUpload = oEvent.getParameter("item");
-            var oCustomerHeaderToken = new sap.ui.core.Item({
-                key: "x-csrf-token",
-                text: this.getModel().getSecurityToken()
-            });
-
-            // Header slug to store a file name
-            var oCustomerHeaderSlug = new sap.ui.core.Item({
-                key: "slug",
-                text: oItemToUpload.getFileName()
-            });
-
-            oUploadSet.removeAllHeaderFields();
-            oUploadSet.addHeaderField(oCustomerHeaderToken);
-            oUploadSet.addHeaderField(oCustomerHeaderSlug);
         },
 
         /**
-        * Handler for a situation, when an upload of a new file is completed
+        * Closed problem closure commentents dialog
         */
+        onCloseClosureCommentsDialog: function () {
 
+            this._closeClosureCommentsDialog();
+
+        },
+
+        /**
+        * Problem confirmation or withdrawal after a comments provision
+        */
+        onExecuteClosureAfterCommentsProvision: function () {
+
+            this._executeProblemClosureAfterCommentsProvision();
+
+        },
+
+        /**
+        * Requester confirmation execution
+        */
+        onPressRequesterConfirm: function () {
+
+            this._confirmProblem();
+
+        },
+
+        /**
+        * Requester withdraw execution
+        */
+        onPressRequesterWithdraw: function () {
+
+            this._withdrawProblem();
+
+        },
+
+        /**
+        * Requester update execution
+        */
+        onRequesterUpdateProblemExecution: function () {
+
+            this._executeProblemRequesterUpdate();
+
+        },
+
+        /**
+        * Requester update button pressed
+        */
+        onPressRequesterUpdate: function () {
+
+            this._openProblemRequesterUpdateDialog();
+
+        },
+
+        /**
+        * Close requester update dialog
+        */
+        onCloseProblemRequesterUpdateDialog: function (oEvent) {
+
+            this.problemRequesterUpdateDialog.destroy(true);
+
+        },
+
+        /**
+       * Upload completed
+       */
         onUploadCompleted: function (oEvent) {
             var oUploadSet = this.byId("UploadSet");
             oUploadSet.removeAllIncompleteItems();
             oUploadSet.getBinding("items").refresh();
+
         },
 
         /**
         * Handler for a situation, when file name is pressed in UploadSet
         */
-
         onFileNamePress: function (oEvent) {
 
-            var attachmentPointer = oEvent.getSource().getBindingContext().sPath + "/$value",
-                fullFilePathUrl = sharedLibrary.getODataPath(this) + attachmentPointer,
-                fullFilePathUrlFixed = sharedLibrary.validateAndFixUrl(fullFilePathUrl), item = oEvent.getParameter("item");
-
-            // Initial url property of item of UploadSet is set to documentId and cannot be reached from a browser
-            // However, initially we still need url property set, as without it a file name will not be clickable
-            // Approach: replacing url property of a UploadSet item to a proper URL of an attachment
-
-            item.setProperty("url", fullFilePathUrlFixed);
+            this._openFileByFileName(oEvent);
+         
         },
 
         /**
@@ -243,6 +211,356 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+        * Open attachment file by name
+        */
+        _openFileByFileName(oEvent) {
+
+            var attachmentPointer = oEvent.getSource().getBindingContext().sPath + "/$value",
+                fullFilePathUrl = sharedLibrary.getODataPath(this) + attachmentPointer,
+                fullFilePathUrlFixed = sharedLibrary.validateAndFixUrl(fullFilePathUrl), item = oEvent.getParameter("item");
+
+            // Initial url property of item of UploadSet is set to documentId and cannot be reached from a browser
+            // However, initially we still need url property set, as without it a file name will not be clickable
+            // Approach: replacing url property of a UploadSet item to a proper URL of an attachment
+
+            item.setProperty("url", fullFilePathUrlFixed);
+
+        },
+
+
+        /**
+        * Execute problem closure after comments provision
+        */
+        _executeProblemClosureAfterCommentsProvision() {
+
+            var t = this;
+
+            this.problemClosurePayload.Note = this._getProblemClosureDialogText();
+
+            this._closeClosureCommentsDialog();
+
+            this._executeProblemClosure();
+
+        },
+
+        /**
+        * Open requester update dialog
+        */
+        _openProblemRequesterUpdateDialog: function () {
+
+            this.problemRequesterUpdateDialog = sap.ui.xmlfragment("zslpmmyprb.view.ProblemRequesterUpdate", this);
+
+            this.getView().addDependent(this.problemRequesterUpdateDialog);
+
+            this.problemRequesterUpdateDialog.open();
+        },
+
+        /**
+        * Execute requester problem update
+        */
+
+        _executeProblemRequesterUpdate: function () {
+
+            var sText = this.getResourceBundle().getText("confirmProblemRequesterUpdate"),
+                t = this;
+
+            sharedLibrary.confirmAction(sText, function () {
+
+                var oPayload = {};
+                oPayload.Note = t._getProblemRequesterUpdateDialogText();
+
+                sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
+                    t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
+                    t, function () {
+
+                        t.onCloseProblemRequesterUpdateDialog();
+                        t.getView().byId("textsList").getBinding("items").refresh();
+
+                    });
+            });
+
+        },
+
+        /**
+        * Upload all incomplete problem attachments at once in a cycle
+        */
+
+        _uploadProblemAttachments: function (sGuid, callback) {
+
+            var oUploadSet = this.byId("UploadSet"),
+                sAttachmentUploadURL = "/ProblemSet(guid'" + sGuid + "')/Attachment",
+                oItems = oUploadSet.getIncompleteItems();
+
+            oUploadSet.setUploadUrl(sharedLibrary.getODataPath(this) + sAttachmentUploadURL);
+
+            for (var k = 0; k < oItems.length; k++) {
+
+                var oItem = oItems[k];
+                var sFileName = oItem.getFileName();
+
+                var oCustomerHeaderToken = new sap.ui.core.Item({
+                    key: "x-csrf-token",
+                    text: this.getModel().getSecurityToken()
+                });
+
+                // Header slug to store a file name
+                var oCustomerHeaderSlug = new sap.ui.core.Item({
+                    key: "slug",
+                    text: sFileName
+                });
+
+                oUploadSet.addHeaderField(oCustomerHeaderToken);
+                oUploadSet.addHeaderField(oCustomerHeaderSlug);
+                oUploadSet.uploadItem(oItem);
+                oUploadSet.removeAllHeaderFields();
+            }
+
+            callback();
+        },
+
+        /**
+        * Get Requester's reply text
+        */
+        _getRequesterReplyText: function () {
+
+            return this.byId("communicationTabTextInputArea").getValue();
+        },
+
+        /**
+        * Validate Requester's reply
+        */
+        _validateRequestersReply: function (callback) {
+
+            var sRequesterReplyText = this._getRequesterReplyText();
+
+            // Mandatory reply text is not provided
+
+            if (!sRequesterReplyText) {
+
+                var sErrorMessage = this.getResourceBundle().getText("mandatoryReplyTextNotEntered");
+
+                sharedLibrary.setFieldErrorState(this, 'communicationTabTextInputArea');
+
+                sap.m.MessageBox.error(sErrorMessage);
+
+            } else {
+
+                sharedLibrary.dropFieldState(this, 'communicationTabTextInputArea');
+
+                callback();
+            }
+        },
+
+        /**
+        * Update problem with a Requester's reply
+        */
+        _executeRequesterReply: function () {
+
+            var sText = this.getResourceBundle().getText("confirmRequesterReply"),
+                t = this,
+                oPayload = {};
+
+            sharedLibrary.confirmAction(sText, function () {
+
+                oPayload.Status = statusNames.inProcess;
+                oPayload.Note = t._getRequesterReplyText();
+
+                sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
+                    null, t.getResourceBundle().getText("problemUpdateFailure"), null,
+                    t, function () {
+
+                        t._uploadProblemAttachments(t.Guid, function () {
+
+                            sap.m.MessageBox.information(t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId));
+
+                            t.byId("UploadSet").getBinding("items").refresh();
+
+                            t._deactivateEditMode();
+                            t.getView().byId("textsList").getBinding("items").refresh();
+
+                            t._refreshListFromDetail(t.ObjectId);
+
+
+                        });
+
+                    });
+            });
+
+        },
+
+        /**
+        * Deactivated edit mode
+        */
+        _deactivateEditMode: function () {
+
+            var oRuntimeModel = this.getOwnerComponent().getModel("runtimeModel");
+            oRuntimeModel.setProperty("/editModeActive", false);
+        },
+        /**
+        * Activate edit mode
+        */
+        _activateEditMode: function () {
+
+            var oRuntimeModel = this.getOwnerComponent().getModel("runtimeModel");
+            oRuntimeModel.setProperty("/editModeActive", true);
+        },
+
+        /**
+        * Close closure comments dialog
+        */
+        _closeClosureCommentsDialog: function () {
+
+            this.closureCommentsDialog.destroy(true);
+
+        }
+        ,
+
+        /**
+        * Show closure comments dialog
+        */
+        _openClosureCommentsDialog: function () {
+
+            this.closureCommentsDialog = sap.ui.xmlfragment("zslpmmyprb.view.ClosureComments", this);
+
+            this.getView().addDependent(this.closureCommentsDialog);
+
+            this.closureCommentsDialog.open();
+
+        },
+
+        /**
+        * Close problem through OData call
+        */
+        _executeProblemClosure: function () {
+
+            var t = this;
+
+            sharedLibrary.updateEntityByEdmGuidKey(this.Guid, this.problemClosurePayload, "ProblemSet",
+                this.getResourceBundle().getText("problemClosedSuccessfully", t.ObjectId),
+                this.getResourceBundle().getText("problemClosureFailure"), null,
+                this, function () {
+
+                    t.getView().byId("textsList").getBinding("items").refresh();
+                    t._refreshListFromDetail(t.ObjectId);
+
+                });
+
+        },
+
+        /**
+        * Confirm problem
+        */
+        _confirmProblem: function () {
+
+            var sText = this.getResourceBundle().getText("confirmProblemConfirmation"),
+                t = this;
+
+            sharedLibrary.confirmAction(sText, function () {
+
+                t.problemClosurePayload.Status = statusNames.confirmed;
+
+                // Check if additional comments should be added
+
+                var sClosureCommentsProposal = t.getResourceBundle().getText("confirmAddingOfClosureComments");
+
+                sharedLibrary.confirmActionOnOkAndCancel(sClosureCommentsProposal, function (sSelectedOption) {
+
+                    switch (sSelectedOption) {
+                        case 'OK':
+                            t._openClosureCommentsDialog();
+                            break;
+                        case 'CANCEL':
+                            t._executeProblemClosure();
+                            break;
+                    }
+                });
+            });
+        },
+
+        /**
+        * Refresh list from detail form
+        */
+        _refreshListFromDetail: function (sObjectId) {
+
+            // Bus specification:
+            // 1. ChannelName, 2. EventName, 3. the data
+
+            this.oEventBus.publish("DetailAction", "onRefreshListFromDetail", {
+                ObjectId: sObjectId
+            });
+        },
+
+        /**
+        * Withdraw problem
+        */
+        _withdrawProblem: function () {
+
+            var sText = this.getResourceBundle().getText("confirmProblemWithdrawal"),
+                t = this;
+
+            sharedLibrary.confirmAction(sText, function () {
+
+                t.problemClosurePayload.Status = statusNames.withdrawn;
+
+                // Check if additional comments should be added
+
+                var sClosureCommentsProposal = t.getResourceBundle().getText("confirmAddingOfClosureComments");
+
+                sharedLibrary.confirmActionOnOkAndCancel(sClosureCommentsProposal, function (sSelectedOption) {
+
+                    switch (sSelectedOption) {
+                        case 'OK':
+                            t._openClosureCommentsDialog();
+                            break;
+                        case 'CANCEL':
+                            t._executeProblemClosure();
+                            break;
+                    }
+                });
+            });
+
+
+            // var sText = this.getResourceBundle().getText("confirmProblemWithdrawal"),
+            //     t = this;
+
+            // sharedLibrary.confirmAction(sText, function () {
+
+            //     var oPayload = {};
+            //     oPayload.Status = statusNames.withdrawn;
+
+            //     sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
+            //         t.getResourceBundle().getText("problemWithdrawnSuccessfully", t.ObjectId),
+            //         t.getResourceBundle().getText("problemWithdrawalFailure"), null,
+            //         t, function () {
+
+            //             t._refreshListFromDetail(t.ObjectId);
+
+            //         });
+            // });
+
+        },
+
+        /**
+        * Get problem closure dialog text
+        */
+        _getProblemClosureDialogText: function () {
+
+            return this.closureCommentsDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+
+        },
+
+
+        /**
+        * Get problem requestor update dialog text
+        */
+
+        _getProblemRequesterUpdateDialogText: function () {
+
+            return this.problemRequesterUpdateDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+
+        },
+
+        /**
         * Refresh UploadSet
         */
 
@@ -263,39 +581,10 @@ sap.ui.define([
             return "/ProblemSet(guid'" + this.Guid + "')";
         },
 
-        /**
-        * Executes a DELETE method against a Attachment entity
-        */
-
-        _deleteAttachment: function (sAttachmentURL, callback) {
-
-            var
-                oDataPath = sharedLibrary.getODataPath(this),
-                oModel = new sap.ui.model.odata.ODataModel(oDataPath, true),
-                oPayload = {},
-                t = this;
-
-            oModel.remove(sAttachmentURL, {
-
-                success: function (oData, response) {
-
-                    // Success
-                    return callback();
-
-                },
-                error: function (oError) {
-
-                    var oMessage = JSON.parse(oError.response.body).error.message.value;
-                    sap.m.MessageBox.error(oMessage);
-
-                }
-            });
-        },
 
         /**
         * Initiates upload of new files in UploadSet 
         */
-
         _startUpload: function () {
             var oUploadSet = this.byId("UploadSet");
             var cFiles = oUploadSet.getIncompleteItems().length;
@@ -367,8 +656,7 @@ sap.ui.define([
                 oResourceBundle = this.getResourceBundle(),
                 oObject = oView.getModel().getObject(sPath),
                 sObjectGuid = oObject.Guid,
-                sObjectId = oObject.Guid,
-                sObjectName = oObject.ObjectId,
+                sObjectId = oObject.ObjectId,                
                 oViewModel = this.getModel("detailView");
 
 

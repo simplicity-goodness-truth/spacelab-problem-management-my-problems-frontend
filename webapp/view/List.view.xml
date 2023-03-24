@@ -37,10 +37,11 @@
                     </OverflowToolbar>
                 </headerToolbar>
                 <items>
-                    <ObjectListItem type="Navigation" press=".onSelectionChange" title="{ObjectId}">
+                    <ObjectListItem type="Navigation" press=".onSelectionChange" 
+                    title="{Description}" intro="{StatusText}" number="{ObjectId}">
                         <attributes>
                             <ObjectAttribute id="__attribute1" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />
-                            <ObjectAttribute id="__attribute2" text="{Description}" />
+       
                         </attributes>
                     </ObjectListItem>
                 </items>

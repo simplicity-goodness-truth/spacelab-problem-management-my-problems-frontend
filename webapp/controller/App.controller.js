@@ -14,7 +14,7 @@ sap.ui.define([
             oViewModel = new JSONModel({
                 busy : true,
                 delay : 0,
-                layout : "OneColumn",
+                layout : "TwoColumnsMidExpanded",
                 previousLayout : "",
                 actionButtonsInfo : {
                     midColumn : {

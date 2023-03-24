@@ -57,11 +57,28 @@ sap.ui.define([
 
             this.getRouter().getRoute("list").attachPatternMatched(this._onMasterMatched, this);
             this.getRouter().attachBypassed(this.onBypassed, this);
+
+            var oEventBus = sap.ui.getCore().getEventBus();
+            // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
+            oEventBus.subscribe("DetailAction", "onRefreshListFromDetail", this.onRefreshListFromDetail, this);
+
         },
 
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
+        /**
+         * Refresh from detail form is triggered       
+         */
+    
+        onRefreshListFromDetail: function (sChannel, sEvent, oData) {
+
+            this.ObjectIdToFocus = oData.ObjectId;
+
+            this.onRefresh();
+
+        },
+
 
         /**
          * After list data is available, this handler method updates the
@@ -72,6 +89,24 @@ sap.ui.define([
         onUpdateFinished : function (oEvent) {
             // update the list object counter after new data is loaded
             this._updateListItemCount(oEvent.getParameter("total"));
+
+             // selecting a first element
+
+             var elementsCount = oEvent.getParameter("total");
+
+             if (elementsCount !== 0) {
+ 
+                 var oFirstItem = this._oList.getItems()[0];
+                 this._oList.setSelectedItem(oFirstItem, true, true);
+ 
+             } else {
+ 
+                 // Show NoDataFound if there are no items in list
+ 
+                 this.getRouter().getTargets().display("detailNoObjectsAvailable");
+ 
+             } // if (elementsCount !== 0 )
+             
         },
 
         /**
@@ -95,7 +130,7 @@ sap.ui.define([
             var sQuery = oEvent.getParameter("query");
 
             if (sQuery) {
-                this._oListFilterState.aSearch = [new Filter("ObjectId", FilterOperator.Contains, sQuery)];
+                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.Contains, sQuery)];
             } else {
                 this._oListFilterState.aSearch = [];
             }

@@ -7,8 +7,13 @@
         confirm=".onConfirmViewSettingsDialog">
         <sortItems>
             <ViewSettingsItem
-                text="{i18n>listSort1}"
+                text="{i18n>listByProblemNumber}"
                 key="ObjectId"
+                selected="true"/>
+
+                <ViewSettingsItem
+                text="{i18n>listByPostingDate}"
+                key="PostingDate"
                 selected="true"/>
 
         </sortItems>
