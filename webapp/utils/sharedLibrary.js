@@ -6,6 +6,62 @@ sap.ui.define([
     return {
 
         /**
+        * Check if objects are equal
+        */
+        areObjectsEqual: function (oObject1, oObject2) {
+            const oKeys1 = Object.keys(oObject1),
+                oKeys2 = Object.keys(oObject2);
+
+            if (oKeys1.length !== oKeys2.length) {
+                return false;
+            }
+            for (let key of oKeys1) {
+                if (oObject1[key] !== oObject2[key]) {
+                    return false;
+                }
+            }
+            return true;
+        }, 
+
+        /**
+        * Read OData entities association by entities Edm.Guid Key
+        */
+        readEntitiesAssoiciationByEdmGuidKey: function (sEntityName, sEntityGuid, sAssociationName,
+            sErroneousExecutionText, oView, bAsync, bShowErrorMessage, callback) {
+
+            var sODataPath = this.getODataPath(oView),
+                oModel = new sap.ui.model.odata.ODataModel(sODataPath, true),
+                sEntityPointer = "/" + sEntityName + "Set(guid'" + sEntityGuid + "')/" + sAssociationName;
+
+            oModel.read(sEntityPointer, {
+                async: bAsync,
+                success: function (oData) {
+
+                    callback(oData);
+
+                },
+                error: function (oError) {
+
+                    var sMessage;
+
+                    if (oError.response) {
+                        sMessage = JSON.parse(oError.response.body).error.message.value;
+                    }
+
+                    if (sErroneousExecutionText) {
+                        sMessage = sErroneousExecutionText + ':\n' + sMessage;
+                    }
+
+                    if (bShowErrorMessage) {
+                        sap.m.MessageBox.error(sMessage);
+                    } else {
+                        callback(sMessage);
+                    }
+                }
+            });
+        },
+
+        /**
         * Read OData entity
         */
         readEntity: function (sEntityName, sErroneousExecutionText, oView, bAsync, bShowErrorMessage, callback) {
@@ -24,13 +80,13 @@ sap.ui.define([
                 error: function (oError) {
 
                     var sMessage;
-                    
+
                     if (oError.response) {
                         sMessage = JSON.parse(oError.response.body).error.message.value;
                     }
 
                     if (sErroneousExecutionText) {
-                        sMessage = sErroneousExecutionText + ':\n' + sMessage ;
+                        sMessage = sErroneousExecutionText + ':\n' + sMessage;
                     }
 
                     if (bShowErrorMessage) {

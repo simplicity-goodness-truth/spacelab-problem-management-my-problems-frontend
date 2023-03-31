@@ -10,14 +10,17 @@ const textTypes = Object.freeze(
         static businessConsequences = 'SUBI';
     });
 
-const statusNames = Object.freeze(
-    class statusNames {
-        static inProcess = 'E0002';
-        static customerAction = 'E0003';
-        static solutionProvided = 'E0005';
-        static confirmed = 'E0008';
-        static withdrawn = 'E0010';
-    });
+    const statusNames = Object.freeze(
+        class statusNames {
+            static new = 'E0001'
+            static approved = 'E0015';
+            static inProcess = 'E0002';
+            static customerAction = 'E0003';
+            static solutionProvided = 'E0005';
+            static confirmed = 'E0008';
+            static withdrawn = 'E0010';
+        });
+    
 
 sap.ui.define([
     "./BaseController",
@@ -65,11 +68,26 @@ sap.ui.define([
             });
             this.getOwnerComponent().setModel(oRuntimeModel, "runtimeModel");
 
+            // Bus for events from a list
+            var oEventBus = sap.ui.getCore().getEventBus();
+            // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
+            oEventBus.subscribe("ListAction", "onRefreshDetailFromList", this.onRefreshDetailFromList, this);
+
         },
 
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
+
+        /**
+        * Details are refreshed from a list
+        */      
+        onRefreshDetailFromList: function () {
+
+            this.byId("UploadSet").getBinding("items").refresh();
+            this.getView().byId("textsList").getBinding("items").refresh();
+
+        },
 
         /**
         * Requester pressed save in reply mode

@@ -58,9 +58,9 @@ sap.ui.define([
             this.getRouter().getRoute("list").attachPatternMatched(this._onMasterMatched, this);
             this.getRouter().attachBypassed(this.onBypassed, this);
 
-            var oEventBus = sap.ui.getCore().getEventBus();
+            this.oEventBus = sap.ui.getCore().getEventBus();
             // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
-            oEventBus.subscribe("DetailAction", "onRefreshListFromDetail", this.onRefreshListFromDetail, this);
+            this.oEventBus.subscribe("DetailAction", "onRefreshListFromDetail", this.onRefreshListFromDetail, this);
 
         },
 
@@ -87,26 +87,45 @@ sap.ui.define([
          * @public
          */
         onUpdateFinished : function (oEvent) {
+            var sObjectIds = [],
+                t = this;;
+
             // update the list object counter after new data is loaded
+
             this._updateListItemCount(oEvent.getParameter("total"));
 
-             // selecting a first element
+            for (var i = 0; i < this._oList.getItems().length; i++) {
+                sObjectIds.push(this._oList.getItems()[i].getProperty('number'));
+            }
 
-             var elementsCount = oEvent.getParameter("total");
 
-             if (elementsCount !== 0) {
- 
-                 var oFirstItem = this._oList.getItems()[0];
-                 this._oList.setSelectedItem(oFirstItem, true, true);
- 
-             } else {
- 
-                 // Show NoDataFound if there are no items in list
- 
-                 this.getRouter().getTargets().display("detailNoObjectsAvailable");
- 
-             } // if (elementsCount !== 0 )
-             
+            if (sObjectIds.indexOf(this.ObjectIdToFocus) > 0) {
+
+                var oSelectedItem = t._oList.getItems()[sObjectIds.indexOf(this.ObjectIdToFocus)];
+
+                this._oList.setSelectedItem(this.oSelectedItem, true, true);
+
+            } else {
+
+                // Select a first items if there are items in list
+
+                var elementsCount = oEvent.getParameter("total");
+
+                if (elementsCount !== 0) {
+
+                    var oFirstItem = this._oList.getItems()[0];
+                    this._oList.setSelectedItem(oFirstItem, true, true);
+
+
+                } else {
+
+                    // Show NoDataFound if there are no items in list
+
+                    this.getRouter().getTargets().display("detailNoObjectsAvailable");
+
+                } // if (elementsCount !== 0 )
+
+            } // if (this.oSelectedItem)
         },
 
         /**
@@ -144,7 +163,13 @@ sap.ui.define([
          * @public
          */
         onRefresh: function () {
+
             this._oList.getBinding("items").refresh();
+
+            // Sending event to detail page via bus
+
+            this.oEventBus.publish("ListAction", "onRefreshDetailFromList");
+
         },
 
         /**
