@@ -10,17 +10,19 @@ const textTypes = Object.freeze(
         static businessConsequences = 'SUBI';
     });
 
-    const statusNames = Object.freeze(
-        class statusNames {
-            static new = 'E0001'
-            static approved = 'E0015';
-            static inProcess = 'E0002';
-            static customerAction = 'E0003';
-            static solutionProvided = 'E0005';
-            static confirmed = 'E0008';
-            static withdrawn = 'E0010';
-        });
-    
+const statusNames = Object.freeze(
+    class statusNames {
+        static new = 'E0001'
+        static approved = 'E0015';
+        static inProcess = 'E0002';
+        static customerAction = 'E0003';
+        static solutionProvided = 'E0005';
+        static confirmed = 'E0008';
+        static withdrawn = 'E0010';
+        static onApproval = 'E0016';
+        static informationRequested = 'E0017';
+    });
+
 
 sap.ui.define([
     "./BaseController",
@@ -73,6 +75,7 @@ sap.ui.define([
             // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
             oEventBus.subscribe("ListAction", "onRefreshDetailFromList", this.onRefreshDetailFromList, this);
 
+
         },
 
         /* =========================================================== */
@@ -81,7 +84,7 @@ sap.ui.define([
 
         /**
         * Details are refreshed from a list
-        */      
+        */
         onRefreshDetailFromList: function () {
 
             this.byId("UploadSet").getBinding("items").refresh();
@@ -199,7 +202,7 @@ sap.ui.define([
         onFileNamePress: function (oEvent) {
 
             this._openFileByFileName(oEvent);
-         
+
         },
 
         /**
@@ -292,6 +295,7 @@ sap.ui.define([
                     t, function () {
 
                         t.onCloseProblemRequesterUpdateDialog();
+                        t._refreshView();
                         t.getView().byId("textsList").getBinding("items").refresh();
 
                     });
@@ -370,6 +374,21 @@ sap.ui.define([
         },
 
         /**
+        * Get status code
+        */
+        _getStatusCode: function (sStatusName) {
+
+            for (var key in statusNames) {
+
+                if (sStatusName == key) {
+
+                    return statusNames[key];
+
+                }
+            }
+        },
+
+        /**
         * Update problem with a Requester's reply
         */
         _executeRequesterReply: function () {
@@ -380,7 +399,19 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                oPayload.Status = statusNames.inProcess;
+                switch (t.Status) {
+                    case t._getStatusCode("customerAction"):
+
+                        oPayload.Status = statusNames.inProcess;
+                        break;
+
+                    case t._getStatusCode("informationRequested"):
+
+                        oPayload.Status = statusNames.onApproval;
+                        break;
+
+                }
+
                 oPayload.Note = t._getRequesterReplyText();
 
                 sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
@@ -394,6 +425,9 @@ sap.ui.define([
                             t.byId("UploadSet").getBinding("items").refresh();
 
                             t._deactivateEditMode();
+
+                            t._refreshView();
+
                             t.getView().byId("textsList").getBinding("items").refresh();
 
                             t._refreshListFromDetail(t.ObjectId);
@@ -413,6 +447,7 @@ sap.ui.define([
 
             var oRuntimeModel = this.getOwnerComponent().getModel("runtimeModel");
             oRuntimeModel.setProperty("/editModeActive", false);
+            this.byId("communicationTabTextInputArea").setValue("");
         },
         /**
         * Activate edit mode
@@ -447,6 +482,14 @@ sap.ui.define([
         },
 
         /**
+* Refresh whole view
+*/
+        _refreshView: function () {
+
+            this.getView().getElementBinding().refresh(true);
+        },
+
+        /**
         * Close problem through OData call
         */
         _executeProblemClosure: function () {
@@ -459,6 +502,7 @@ sap.ui.define([
                 this, function () {
 
                     t.getView().byId("textsList").getBinding("items").refresh();
+                    t._refreshView();
                     t._refreshListFromDetail(t.ObjectId);
 
                 });
@@ -538,23 +582,6 @@ sap.ui.define([
             });
 
 
-            // var sText = this.getResourceBundle().getText("confirmProblemWithdrawal"),
-            //     t = this;
-
-            // sharedLibrary.confirmAction(sText, function () {
-
-            //     var oPayload = {};
-            //     oPayload.Status = statusNames.withdrawn;
-
-            //     sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
-            //         t.getResourceBundle().getText("problemWithdrawnSuccessfully", t.ObjectId),
-            //         t.getResourceBundle().getText("problemWithdrawalFailure"), null,
-            //         t, function () {
-
-            //             t._refreshListFromDetail(t.ObjectId);
-
-            //         });
-            // });
 
         },
 
@@ -674,12 +701,13 @@ sap.ui.define([
                 oResourceBundle = this.getResourceBundle(),
                 oObject = oView.getModel().getObject(sPath),
                 sObjectGuid = oObject.Guid,
-                sObjectId = oObject.ObjectId,                
+                sObjectId = oObject.ObjectId,
                 oViewModel = this.getModel("detailView");
 
 
             this.Guid = sObjectGuid;
             this.ObjectId = sObjectId;
+            this.Status = oObject.Status;
 
             this.getOwnerComponent().oListSelector.selectAListItem(sPath);
 

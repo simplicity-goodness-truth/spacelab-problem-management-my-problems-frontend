@@ -23,28 +23,28 @@ sap.ui.define([
          * Called when the list controller is instantiated. It sets up the event handling for the list/detail communication and other lifecycle tasks.
          * @public
          */
-        onInit : function () {
+        onInit: function () {
             // Control state model
             var oList = this.byId("list"),
                 oViewModel = this._createViewModel(),
                 // Put down list's original value for busy indicator delay,
                 // so it can be restored later on. Busy handling on the list is
                 // taken care of by the list itself.
-                iOriginalBusyDelay = oList.getBusyIndicatorDelay();
-
+                iOriginalBusyDelay = oList.getBusyIndicatorDelay(),
+                t = this;
 
             this._oList = oList;
             // keeps the filter and search state
             this._oListFilterState = {
-                aFilter : [],
-                aSearch : []
+                aFilter: [],
+                aSearch: []
             };
 
             this.setModel(oViewModel, "listView");
             // Make sure, busy indication is showing immediately so there is no
             // break after the busy indication for loading the view's meta data is
             // ended (see promise 'oWhenMetadataIsLoaded' in AppController)
-            oList.attachEventOnce("updateFinished", function(){
+            oList.attachEventOnce("updateFinished", function () {
                 // Restore original busy indicator delay for the list
                 oViewModel.setProperty("/delay", iOriginalBusyDelay);
             });
@@ -62,16 +62,35 @@ sap.ui.define([
             // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
             this.oEventBus.subscribe("DetailAction", "onRefreshListFromDetail", this.onRefreshListFromDetail, this);
 
+            var oExecutionContext = this.getOwnerComponent().getModel("executionContext");
+
+
+
         },
 
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
+       
+        /**
+         * Before form is rendered
+        */
+        onBeforeRendering: function () {
+            // Set current user properties header
+
+            this._setUserPropertiesHeader();
+
+            // Filter list per application configuration
+
+            this._filterListPerApplicationConfiguration();
+        },
+        
         /**
          * Refresh from detail form is triggered       
          */
-    
+
         onRefreshListFromDetail: function (sChannel, sEvent, oData) {
+
 
             this.ObjectIdToFocus = oData.ObjectId;
 
@@ -86,7 +105,9 @@ sap.ui.define([
          * @param {sap.ui.base.Event} oEvent the update finished event
          * @public
          */
-        onUpdateFinished : function (oEvent) {
+        onUpdateFinished: function (oEvent) {
+
+
             var sObjectIds = [],
                 t = this;;
 
@@ -193,7 +214,7 @@ sap.ui.define([
                     id: this.getView().getId(),
                     name: "zslpmmyprb.view.ViewSettingsDialog",
                     controller: this
-                }).then(function(oDialog){
+                }).then(function (oDialog) {
                     // connect dialog to the root view of this component (models, lifecycle)
                     this.getView().addDependent(oDialog);
                     oDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
@@ -214,7 +235,7 @@ sap.ui.define([
          * @public
          */
         onConfirmViewSettingsDialog: function (oEvent) {
-            
+
             this._applySortGroup(oEvent);
         },
 
@@ -228,7 +249,7 @@ sap.ui.define([
                 sPath,
                 bDescending,
                 aSorters = [];
-            
+
             sPath = mParams.sortItem.getKey();
             bDescending = mParams.sortDescending;
             aSorters.push(new Sorter(sPath, bDescending));
@@ -270,8 +291,8 @@ sap.ui.define([
          */
         createGroupHeader: function (oGroup) {
             return new GroupHeaderListItem({
-                title : oGroup.text,
-                upperCase : false
+                title: oGroup.text,
+                upperCase: false
             });
         },
 
@@ -280,7 +301,7 @@ sap.ui.define([
          * We navigate back in the browser history
          * @public
          */
-        onNavBack: function() {
+        onNavBack: function () {
             // eslint-disable-next-line sap-no-history-manipulation
             history.go(-1);
         },
@@ -290,7 +311,51 @@ sap.ui.define([
         /* =========================================================== */
 
 
-        _createViewModel: function() {
+
+        /**
+         * Filter result list according to application configuration
+         */
+        _filterListPerApplicationConfiguration: function () {
+
+            var oApplicationConfiguration = this.getOwnerComponent().getModel("applicationConfiguration"),
+                oParameters = oApplicationConfiguration.oData.ApplicationConfiguration.results,
+                t = this;
+
+            for (var i = 0; i < oParameters.length; i++) {
+
+                if (oParameters[i].Param.indexOf('SHOW_ONLY_PERSONAL_PROBLEMS') > 0) {
+
+                    if (oParameters[i].Value === 'X') {
+
+                        var oBinding = t._oList.getBinding("items"),
+                            oFilter = [];
+
+                        oFilter.push(new Filter("RequestorBusinessPartner", FilterOperator.Contains, t.oExecutionContext.oData.SystemUser.BusinessPartner));
+
+                        oBinding.filter(oFilter);
+
+                    }
+                }
+            }
+        },
+
+        /**
+         * Set user properties header
+         */
+        _setUserPropertiesHeader: function () {
+
+            var oExecutionContext = this.getOwnerComponent().getModel("executionContext");
+
+            this.oExecutionContext = oExecutionContext;
+
+            // Setting models to display user and company name
+
+            this.byId("systemUserName").setModel(oExecutionContext, "runtimeModel");
+            this.byId("systemUserCompanyName").setModel(oExecutionContext, "runtimeModel");
+
+        },
+
+        _createViewModel: function () {
             return new JSONModel({
                 isFilterBarVisible: false,
                 filterBarLabel: "",
@@ -302,7 +367,7 @@ sap.ui.define([
             });
         },
 
-        _onMasterMatched:  function() {
+        _onMasterMatched: function () {
             //Set the layout property of the FCL control to 'OneColumn'
             this.getModel("appView").setProperty("/layout", "OneColumn");
         },
@@ -318,7 +383,7 @@ sap.ui.define([
             // set the layout property of FCL control to show two columns
             this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
             this.getRouter().navTo("object", {
-                objectId : oItem.getBindingContext().getProperty("Guid")
+                objectId: oItem.getBindingContext().getProperty("Guid")
             }, bReplace);
         },
 
@@ -358,7 +423,7 @@ sap.ui.define([
          * @param {string} sFilterBarText the selected filter value
          * @private
          */
-        _updateFilterBar : function (sFilterBarText) {
+        _updateFilterBar: function (sFilterBarText) {
             var oViewModel = this.getModel("listView");
             oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
             oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("listFilterBarText", [sFilterBarText]));

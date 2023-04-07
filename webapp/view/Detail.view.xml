@@ -91,11 +91,20 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                     </ColumnListItem>
 
 
+                                    <ColumnListItem id="tableProblemDetailsItemContactPersonEmail">
+                                        <cells>
+                                            <Text text="{i18n>contactPersonEmail}" width="100%" id="tableProblemDetailsLabelContactPersonEmail" />
+                                            <HBox id="tableProblemDetailsItemContactPersonEmailHBox">                                             
+                                                <Text text="{ path: 'ContactEmail'}" width="100%" id="tableProblemDetailsFieldContactPersonEmail" />
+                                            </HBox>
+                                        </cells>
+                                    </ColumnListItem>
+
+
                                     <ColumnListItem id="tableProblemDetailsItemProduct">
                                         <cells>
                                             <Text text="{i18n>productTitle}" width="100%" id="tableProblemDetailsLabelProduct" />
-                                            <HBox id="tableProblemDetailsItemProductHBox">
-                                             
+                                            <HBox id="tableProblemDetailsItemProductHBox">                                             
                                                 <Text text="{ path: 'ProductText'}" width="100%" id="tableProblemDetailsFieldProductText" />
                                             </HBox>
                                         </cells>
@@ -144,9 +153,10 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         <cells>
                                             <Text text="{i18n>SLAIrtPerc}" width="100%" id="tableProblemDetailsLabelSLAIrtPerc" />
                                             <HBox id="tableProblemDetailsItemSLAIrtHBox">
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAIrtIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconIrtSLAOverdue"/>
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAIrtIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconIrtSLANotDue" />
-                                                <Text text="{SLAIrtPerc} %" width="100%" id="tableProblemDetailsFieldSLAIrtPerc" />
+                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAsOnHold}  ? false : ${SLAIrtIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconIrtSLAOverdue"/>
+                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAsOnHold}  ? false : ${SLAIrtIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconIrtSLANotDue" />
+                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://pause" color="#053B70" visible="{=  ${SLAsOnHold}  ? true :  false }"  id="iconIrtSLAOnHold" />
+                                                <Text text="{=  ${SLAsOnHold}  ? ${StoredSLAIrtPerc} : ${SLAIrtPerc} } %" width="100%" id="tableProblemDetailsFieldSLAIrtPerc" />
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
@@ -161,8 +171,9 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         <cells>
                                             <Text text="{i18n>SLAMptPerc}" width="100%" id="tableProblemDetailsLabelSLAMptPerc" />
                                             <HBox id="tableProblemDetailsItemSLAMptHBox">
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAMptIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconMptSLAOverdue"/>
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAMptIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconMptSLANotDue" />
+                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAsOnHold}  ? false : ${SLAMptIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconMptSLAOverdue"/>
+                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAsOnHold}  ? false : ${SLAMptIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconMptSLANotDue" />
+                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://pause" color="#053B70" visible="{=  ${SLAsOnHold}  ? true :  false }"  id="iconMptSLAOnHold" />
                                                 <Text text="{SLAMptPerc} %" width="100%" id="tableProblemDetailsFieldSLAMptPerc" />
                                             </HBox>
                                         </cells>

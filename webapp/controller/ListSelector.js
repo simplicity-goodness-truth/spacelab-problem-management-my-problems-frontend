@@ -22,6 +22,7 @@ sap.ui.define([
             this.oWhenListLoadingIsDone = new Promise(function (fnResolve, fnReject) {
                 this._oWhenListHasBeenSet
                     .then(function (oList) {
+            
                         oList.getBinding("items").attachEventOnce("dataReceived",
                             function () {
                                 if (this._oList.getItems().length) {
@@ -38,6 +39,11 @@ sap.ui.define([
                         );
                     }.bind(this));
             }.bind(this));
+
+
+         
+
+
         },
 
         /**

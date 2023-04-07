@@ -1,7 +1,14 @@
 <mvc:View controllerName="zslpmmyprb.controller.List" xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc">
     <semantic:SemanticPage id="listPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
         <semantic:titleHeading>
+            <VBox>
             <Title id="listPageTitle" text="{listView>/title}" level="H2" />
+                <HBox>
+                <Text text="{ path: 'runtimeModel>/SystemUser/FullName'}" id="systemUserName" class="sapUiTinyMarginEnd" />
+                    <Text text="/" width="100%" id="subHeaderSlash" class="sapUiTinyMarginEnd" />
+                    <Text text="{ path: 'runtimeModel>/SystemUser/CompanyName'}" id="systemUserCompanyName" />
+                    </HBox>
+                    </VBox>
         </semantic:titleHeading>
         <semantic:content>
             <!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->

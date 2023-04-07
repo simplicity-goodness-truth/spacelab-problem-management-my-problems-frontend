@@ -6,6 +6,22 @@ sap.ui.define([
     return {
 
         /**
+        * Validation of email
+        */
+        isValidEmailAddress: function (sEmailAddress) {
+
+            var t = this,
+                sMailregex = /^\w+[\w-+\.]*\@\w+([-\.]\w+)*\.[a-zA-Z]{2,}$/;
+
+            if (sMailregex.test(sEmailAddress)) {
+
+                return true;
+
+            }
+        },
+
+
+        /**
         * Check if objects are equal
         */
         areObjectsEqual: function (oObject1, oObject2) {
@@ -21,7 +37,7 @@ sap.ui.define([
                 }
             }
             return true;
-        }, 
+        },
 
         /**
         * Read OData entities association by entities Edm.Guid Key
@@ -60,6 +76,51 @@ sap.ui.define([
                 }
             });
         },
+
+
+        /**
+        * Read OData entity with set filter
+        */
+        readEntityWithFilter: function (sEntityName, sFilterExpression, sErroneousExecutionText, oView, bAsync, bShowErrorMessage, callback) {
+
+            var sODataPath = this.getODataPath(oView),
+                oModel = new sap.ui.model.odata.ODataModel(sODataPath, true),
+                sEntityPointer = "/" + sEntityName + "Set";
+
+            if (sFilterExpression.length > 0) {
+
+                sEntityPointer = sEntityPointer + "?$filter=" + sFilterExpression;
+
+            }
+
+            oModel.read(sEntityPointer, {
+                async: bAsync,
+                success: function (oData) {
+
+                    callback(oData);
+
+                },
+                error: function (oError) {
+
+                    var sMessage;
+
+                    if (oError.response) {
+                        sMessage = JSON.parse(oError.response.body).error.message.value;
+                    }
+
+                    if (sErroneousExecutionText) {
+                        sMessage = sErroneousExecutionText + ':\n' + sMessage;
+                    }
+
+                    if (bShowErrorMessage) {
+                        sap.m.MessageBox.error(sMessage);
+                    } else {
+                        callback(sMessage);
+                    }
+                }
+            });
+        },
+
 
         /**
         * Read OData entity
