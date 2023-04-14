@@ -89,6 +89,7 @@ sap.ui.define([
 
             this.byId("UploadSet").getBinding("items").refresh();
             this.getView().byId("textsList").getBinding("items").refresh();
+            this._refreshView();
 
         },
 
@@ -447,8 +448,29 @@ sap.ui.define([
 
             var oRuntimeModel = this.getOwnerComponent().getModel("runtimeModel");
             oRuntimeModel.setProperty("/editModeActive", false);
+
             this.byId("communicationTabTextInputArea").setValue("");
         },
+
+        /**
+        * Get tabs full Id by Id mask
+        */
+        _getFullTabIdByIdMask: function (sIdMask) {
+
+            var oIconTabBarItems = this.byId("iconTabBar").getItems();
+               
+            for (var i = 0; i < oIconTabBarItems.length; i++) {
+
+                if (oIconTabBarItems[i].sId.indexOf(sIdMask) > 0)  {
+
+                    return oIconTabBarItems[i].sId;
+
+                }
+            }
+    
+        },
+
+
         /**
         * Activate edit mode
         */
@@ -456,6 +478,12 @@ sap.ui.define([
 
             var oRuntimeModel = this.getOwnerComponent().getModel("runtimeModel");
             oRuntimeModel.setProperty("/editModeActive", true);
+
+            // Switching to communication tab
+
+           var sTabCommunicationFullName = this._getFullTabIdByIdMask("tabCommunication");
+
+            this.byId("iconTabBar").setSelectedKey(sTabCommunicationFullName);
         },
 
         /**
@@ -482,8 +510,8 @@ sap.ui.define([
         },
 
         /**
-* Refresh whole view
-*/
+        * Refresh whole view
+        */
         _refreshView: function () {
 
             this.getView().getElementBinding().refresh(true);
@@ -585,6 +613,7 @@ sap.ui.define([
 
         },
 
+
         /**
         * Get problem closure dialog text
         */
@@ -685,6 +714,10 @@ sap.ui.define([
         },
 
         _onBindingChange: function () {
+
+
+
+
             var oView = this.getView(),
                 oElementBinding = oView.getElementBinding();
 
@@ -708,8 +741,11 @@ sap.ui.define([
             this.Guid = sObjectGuid;
             this.ObjectId = sObjectId;
             this.Status = oObject.Status;
+            this.SAPSystemName = oObject.SAPSystemName;
 
             this.getOwnerComponent().oListSelector.selectAListItem(sPath);
+
+
 
         },
 

@@ -15,7 +15,7 @@
     "devDependencies": {
         "@sap-ux/ui5-middleware-fe-mockserver": "2",
         "@sap/ux-ui5-tooling": "1",
-        "@ui5/cli": "^2.14.1",
+        "@ui5/cli": "^3.0.7",
         "rimraf": "^3.0.2",
         "ui5-task-flatten-library": "^0.2.5"
     },
