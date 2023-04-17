@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <ViewSettingsDialog
+        id="viewSettingsDialog"
+        confirm=".onConfirmViewSettingsDialog">
+        <sortItems>
+            <ViewSettingsItem
+                text="{i18n>listByProblemNumber}"
+                key="ObjectId"
+                selected="true"/>
+
+                <ViewSettingsItem
+                text="{i18n>listByPostingDate}"
+                key="PostingDate"
+                selected="true"/>
+
+        </sortItems>
+
+    </ViewSettingsDialog>
+</core:FragmentDefinition>
