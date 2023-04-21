@@ -330,7 +330,7 @@ sap.ui.define([
                         var oBinding = t._oList.getBinding("items"),
                             oFilter = [];
 
-                        oFilter.push(new Filter("RequestorBusinessPartner", FilterOperator.Contains, t.oExecutionContext.oData.SystemUser.BusinessPartner));
+                        oFilter.push(new Filter("RequestorBusinessPartner", FilterOperator.EQ, t.oExecutionContext.oData.SystemUser.BusinessPartner));
 
                         oBinding.filter(oFilter);
 

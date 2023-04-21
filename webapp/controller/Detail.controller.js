@@ -406,6 +406,13 @@ sap.ui.define([
                         oPayload.Status = statusNames.inProcess;
                         break;
 
+                        
+                    case t._getStatusCode("solutionProvided"):
+
+                    oPayload.Status = statusNames.inProcess;
+                    break;
+
+
                     case t._getStatusCode("informationRequested"):
 
                         oPayload.Status = statusNames.onApproval;
