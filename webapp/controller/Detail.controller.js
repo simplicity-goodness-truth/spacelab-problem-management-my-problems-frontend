@@ -406,6 +406,11 @@ sap.ui.define([
                         oPayload.Status = statusNames.inProcess;
                         break;
 
+                    case t._getStatusCode("solutionProvided"):
+
+                        oPayload.Status = statusNames.inProcess;
+                        break;
+
                     case t._getStatusCode("informationRequested"):
 
                         oPayload.Status = statusNames.onApproval;
@@ -458,16 +463,16 @@ sap.ui.define([
         _getFullTabIdByIdMask: function (sIdMask) {
 
             var oIconTabBarItems = this.byId("iconTabBar").getItems();
-               
+
             for (var i = 0; i < oIconTabBarItems.length; i++) {
 
-                if (oIconTabBarItems[i].sId.indexOf(sIdMask) > 0)  {
+                if (oIconTabBarItems[i].sId.indexOf(sIdMask) > 0) {
 
                     return oIconTabBarItems[i].sId;
 
                 }
             }
-    
+
         },
 
 
@@ -481,7 +486,7 @@ sap.ui.define([
 
             // Switching to communication tab
 
-           var sTabCommunicationFullName = this._getFullTabIdByIdMask("tabCommunication");
+            var sTabCommunicationFullName = this._getFullTabIdByIdMask("tabCommunication");
 
             this.byId("iconTabBar").setSelectedKey(sTabCommunicationFullName);
         },
