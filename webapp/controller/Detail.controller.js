@@ -83,11 +83,21 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+        * Selected file format mismatch
+        */
+        onMediaTypeMismatch: function () {
+
+            sap.m.MessageBox.error(this.getResourceBundle().getText("fileFormatIsNotSupported"));
+
+        },
+
+
+        /**
         * Details are refreshed from a list
         */
         onRefreshDetailFromList: function () {
 
-            this.byId("UploadSet").getBinding("items").refresh();
+            this.byId("problemUploadSet").getBinding("items").refresh();
             this.getView().byId("textsList").getBinding("items").refresh();
             this._refreshView();
 
@@ -191,7 +201,7 @@ sap.ui.define([
        * Upload completed
        */
         onUploadCompleted: function (oEvent) {
-            var oUploadSet = this.byId("UploadSet");
+            var oUploadSet = this.byId("problemUploadSet");
             oUploadSet.removeAllIncompleteItems();
             oUploadSet.getBinding("items").refresh();
 
@@ -310,7 +320,7 @@ sap.ui.define([
 
         _uploadProblemAttachments: function (sGuid, callback) {
 
-            var oUploadSet = this.byId("UploadSet"),
+            var oUploadSet = this.byId("problemUploadSet"),
                 sAttachmentUploadURL = "/ProblemSet(guid'" + sGuid + "')/Attachment",
                 oItems = oUploadSet.getIncompleteItems();
 
@@ -329,7 +339,7 @@ sap.ui.define([
                 // Header slug to store a file name
                 var oCustomerHeaderSlug = new sap.ui.core.Item({
                     key: "slug",
-                    text: sFileName
+                    text: encodeURIComponent(sFileName)
                 });
 
                 oUploadSet.addHeaderField(oCustomerHeaderToken);
@@ -406,11 +416,11 @@ sap.ui.define([
                         oPayload.Status = statusNames.inProcess;
                         break;
 
-                        
+
                     case t._getStatusCode("solutionProvided"):
 
-                    oPayload.Status = statusNames.inProcess;
-                    break;
+                        oPayload.Status = statusNames.inProcess;
+                        break;
 
 
                     case t._getStatusCode("informationRequested"):
@@ -430,7 +440,7 @@ sap.ui.define([
 
                             sap.m.MessageBox.information(t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId));
 
-                            t.byId("UploadSet").getBinding("items").refresh();
+                            t.byId("problemUploadSet").getBinding("items").refresh();
 
                             t._deactivateEditMode();
 
@@ -465,16 +475,16 @@ sap.ui.define([
         _getFullTabIdByIdMask: function (sIdMask) {
 
             var oIconTabBarItems = this.byId("iconTabBar").getItems();
-               
+
             for (var i = 0; i < oIconTabBarItems.length; i++) {
 
-                if (oIconTabBarItems[i].sId.indexOf(sIdMask) > 0)  {
+                if (oIconTabBarItems[i].sId.indexOf(sIdMask) > 0) {
 
                     return oIconTabBarItems[i].sId;
 
                 }
             }
-    
+
         },
 
 
@@ -488,7 +498,7 @@ sap.ui.define([
 
             // Switching to communication tab
 
-           var sTabCommunicationFullName = this._getFullTabIdByIdMask("tabCommunication");
+            var sTabCommunicationFullName = this._getFullTabIdByIdMask("tabCommunication");
 
             this.byId("iconTabBar").setSelectedKey(sTabCommunicationFullName);
         },
@@ -647,7 +657,7 @@ sap.ui.define([
 
         _refreshUploadSet: function () {
 
-            var oUploadSet = this.byId("UploadSet");
+            var oUploadSet = this.byId("problemUploadSet");
             oUploadSet.getBinding("items").refresh();
 
         },
@@ -667,7 +677,7 @@ sap.ui.define([
         * Initiates upload of new files in UploadSet 
         */
         _startUpload: function () {
-            var oUploadSet = this.byId("UploadSet");
+            var oUploadSet = this.byId("problemUploadSet");
             var cFiles = oUploadSet.getIncompleteItems().length;
 
             if (cFiles > 0) {

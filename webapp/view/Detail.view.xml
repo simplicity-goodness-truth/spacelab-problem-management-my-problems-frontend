@@ -35,30 +35,31 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                     <IconTabFilter id="tabAttachments" icon="sap-icon://attachment" tooltip="{i18n>attachmentsIconTabBarText}" text="{i18n>attachmentsIconTabBarText}">
                         <content>
                             <upload:UploadSet
-                            id="UploadSet"
+                            id="problemUploadSet"
                             instantUpload="false"
                             showIcons="true"
                             uploadEnabled="{runtimeModel>/editModeActive}"
                             terminationEnabled="true"
-                            fileTypes="jpeg,csv,xls,txt,doc,png,docx,xlsx,jpg,pdf"
+                            fileTypes="jpeg,csv,xls,txt,doc,png,docx,xlsx,jpg,pdf,eml,sar,zip,rar"
                             maxFileNameLength="255"
                             maxFileSize="10"
-                            mediaTypes="application/pdf,text/plain,application/msword,image/png,text/csv,text/html,application/zip,image/jpeg,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            mediaTypes="application/pdf,text/plain,application/msword,image/png,text/csv,text/html,application/zip,image/jpeg,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream,message/rfc822,application/vnd.sar,application/zip,application/vnd.rar,application/x-rar-compressed,application/x-zip-compressed"
                             items="{Attachment}"
                             beforeUploadStarts="onBeforeUploadStarts"
                             uploadCompleted="onUploadCompleted"
                             afterItemAdded="onAfterItemAdded"
                             noDataDescription="{i18n>noAttachmentsDescription}"
                             noDataText="{i18n>noAttachmentsText}"
+                            mediaTypeMismatch = "onMediaTypeMismatch"                    
                         >
                                 <upload:toolbar>
                                     <OverflowToolbar id="OverflowToolbar">
-                                        <ToolbarSpacer id="ToolbarSpacer" />
+                                        <ToolbarSpacer id="myToolbarSpacer" />
                                     </OverflowToolbar>
                                 </upload:toolbar>
                                 <upload:items>                        
                                                 
-                                    <upload:UploadSetItem id="UploadSetItem" fileName="{Name}" mediaType="{Mimetype}" url="{DocumentId}"
+                                    <upload:UploadSetItem id="problemUploadSetItem" fileName="{Name}" mediaType="{Mimetype}" url="{DocumentId}"
                                         visibleEdit="false" visibleRemove="false" enabledRemove="false" openPressed="onFileNamePress"  />
                                 </upload:items>
                             </upload:UploadSet>

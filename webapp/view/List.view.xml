@@ -39,7 +39,7 @@
                                 <OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow" />
                             </layoutData>
                         </SearchField>
-                        <ToolbarSpacer />
+                        <ToolbarSpacer id="myToolbarSpacer"/>
                         <Button id="sortButton" press=".onOpenViewSettings" icon="sap-icon://sort" type="Transparent" />
                     </OverflowToolbar>
                 </headerToolbar>
