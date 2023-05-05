@@ -8,6 +8,7 @@ const textTypes = Object.freeze(
         static internalNote = 'SU04';
         static solution = 'SUSO';
         static businessConsequences = 'SUBI';
+        static additionalInformation = 'SU30';
     });
 
 const statusNames = Object.freeze(
@@ -22,7 +23,6 @@ const statusNames = Object.freeze(
         static onApproval = 'E0016';
         static informationRequested = 'E0017';
     });
-
 
 sap.ui.define([
     "./BaseController",
@@ -82,6 +82,14 @@ sap.ui.define([
         /* event handlers                                              */
         /* =========================================================== */
 
+        /**
+        * Selected file extension mismatch
+        */
+        onFileTypeMismatch: function () {
+
+            sap.m.MessageBox.error(this.getResourceBundle().getText("fileFormatIsNotSupported"));
+
+        },
         /**
         * Selected file format mismatch
         */
@@ -243,6 +251,22 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+        * Vulnerabilities clearing
+        */
+
+        _clearTextFieldVulnerabilities: function (sTextField, sTextFieldClassName) {
+
+            if ((sTextField) && (sharedLibrary.getTextFieldTypesToValidateVulnerabilities().includes(sTextFieldClassName))) {
+
+                sTextField = sharedLibrary.clearTextFieldVulnerabilities(sTextField);
+
+            }
+
+            return sTextField;
+
+        },
+
+        /**
         * Open attachment file by name
         */
         _openFileByFileName(oEvent) {
@@ -288,9 +312,25 @@ sap.ui.define([
         },
 
         /**
+        * Creation of a problem text
+        */
+        _createProblemText: function (sGuid, sTextId, sText, callback) {
+
+            var oTextPayload = {};
+
+            oTextPayload.Tdid = sTextId;
+            oTextPayload.TextString = sText;
+
+            sharedLibrary.createSubEntity("ProblemSet", sGuid, "Text", oTextPayload,
+                null, this.getResourceBundle().getText("textCreationFailure"),
+                this, function () { });
+
+            callback();
+        },
+
+        /**
         * Execute requester problem update
         */
-
         _executeProblemRequesterUpdate: function () {
 
             var sText = this.getResourceBundle().getText("confirmProblemRequesterUpdate"),
@@ -298,19 +338,30 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                var oPayload = {};
-                oPayload.Note = t._getProblemRequesterUpdateDialogText();
-
-                sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
-                    t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
-                    t, function () {
+                t._createProblemText(t.Guid, textTypes.additionalInformation, t._getProblemRequesterUpdateDialogText(),
+                    function () {
 
                         t.onCloseProblemRequesterUpdateDialog();
                         t._refreshView();
                         t.getView().byId("textsList").getBinding("items").refresh();
 
                     });
+
+
+                //var oPayload = {};
+                // oPayload.Note = t._getProblemRequesterUpdateDialogText();
+
+                // sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
+                //     t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
+                //     t, function () {
+
+                //         t.onCloseProblemRequesterUpdateDialog();
+                //         t._refreshView();
+                //         t.getView().byId("textsList").getBinding("items").refresh();
+
+                //     });
             });
+
 
         },
 
@@ -356,7 +407,13 @@ sap.ui.define([
         */
         _getRequesterReplyText: function () {
 
-            return this.byId("communicationTabTextInputArea").getValue();
+            var sReplyText = this.byId("communicationTabTextInputArea").getValue();
+
+            // Vulnerabilities clearing
+
+            sReplyText = this._clearTextFieldVulnerabilities(sReplyText, this.byId("communicationTabTextInputArea").__proto__.getMetadata()._sClassName);
+
+            return sReplyText;
         },
 
         /**
@@ -636,7 +693,13 @@ sap.ui.define([
         */
         _getProblemClosureDialogText: function () {
 
-            return this.closureCommentsDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+            var sClosureDialogText = this.closureCommentsDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+
+            // Vulnerabilities clearing
+
+            sClosureDialogText = this._clearTextFieldVulnerabilities(sClosureDialogText, this.closureCommentsDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].__proto__.getMetadata()._sClassName);
+
+            return sClosureDialogText;
 
         },
 
@@ -647,7 +710,13 @@ sap.ui.define([
 
         _getProblemRequesterUpdateDialogText: function () {
 
-            return this.problemRequesterUpdateDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+            var sUpdateDialogText = this.problemRequesterUpdateDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+
+            // Vulnerabilities clearing
+
+            sUpdateDialogText = this._clearTextFieldVulnerabilities(sUpdateDialogText, this.problemRequesterUpdateDialog.getContent()[0].getItems()[0].getContent()[0].getItems()[0].__proto__.getMetadata()._sClassName);
+
+            return sUpdateDialogText;
 
         },
 

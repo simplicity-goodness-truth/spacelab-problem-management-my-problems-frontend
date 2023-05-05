@@ -1,9 +1,44 @@
+const textFieldTypesToValidateVulnerabilities = Object.freeze(
+    class textFieldTypesToValidateVulnerabilities {
+        static fieldTypes = ['sap.m.TextArea', 'sap.m.Input'];
+    });
+
+
 sap.ui.define([
     "sap/ui/export/library",
     "sap/ui/export/Spreadsheet"
 ], function (exportLibrary, spreadsheet) {
     "use strict";
     return {
+
+        /**
+        * Get text field types to validate vulnerabilities        
+        */
+
+        getTextFieldTypesToValidateVulnerabilities: function() {
+
+            return textFieldTypesToValidateVulnerabilities.fieldTypes;
+
+        },
+
+        /**
+        * Validation for Vulnerabilities: text fields
+        */
+
+        clearTextFieldVulnerabilities: function (sTextFieldData) {
+
+            var sTextFieldDataWithoutVulnerabilities;
+
+            // Remove JS script tags
+
+            var jsOpenRegex = /<script[^>]*>/g,
+                jsCloseRegex = /<\/script>/g;
+
+            sTextFieldDataWithoutVulnerabilities = sTextFieldData.replace(jsOpenRegex, '-script-open-tag-').replace(jsCloseRegex, '-script-close-tag-');
+
+            return sTextFieldDataWithoutVulnerabilities;
+
+        },
 
         /**
         * Validation of email
@@ -19,7 +54,6 @@ sap.ui.define([
 
             }
         },
-
 
         /**
         * Check if objects are equal
@@ -245,6 +279,7 @@ sap.ui.define([
                         JSON.parse(oError.response.body).error.message.value;
 
                     sap.m.MessageBox.error(oMessage);
+
                 }
             });
         },
@@ -334,7 +369,6 @@ sap.ui.define([
         /**
         * Set field error state
         */
-
         setFieldErrorState: function (oView, sFieldId) {
 
             oView.byId(sFieldId).setValueState("Error");
@@ -344,7 +378,6 @@ sap.ui.define([
         /**
         * Drop field state
         */
-
         dropFieldState: function (oView, sFieldId) {
 
             oView.byId(sFieldId).setValueState("None");
@@ -354,7 +387,6 @@ sap.ui.define([
         /**
         * Returns OData service path
         */
-
         getODataPath: function (oView) {
 
             return oView.getOwnerComponent().getManifestEntry("/sap.app/dataSources/mainService/uri");
@@ -363,7 +395,6 @@ sap.ui.define([
         /**
         * Confirmation message box with callback on OK selection
         */
-
         confirmAction: function (sText, callback) {
 
             sap.m.MessageBox.confirm(sText, {
@@ -382,7 +413,6 @@ sap.ui.define([
         /**
         * Confirmation message box with callback on OK and CANCEL selections
         */
-
         confirmActionOnOkAndCancel: function (sText, callback) {
 
             sap.m.MessageBox.confirm(sText, {
@@ -401,7 +431,6 @@ sap.ui.define([
         /**
         * Information message box with callback
         */
-
         informationAction: function (sText, callback) {
 
             sap.m.MessageBox.information(sText, {

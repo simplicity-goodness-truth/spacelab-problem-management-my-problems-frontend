@@ -28,9 +28,10 @@
                 noDataText="{listView>/noDataText}"
                 mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
                 growing="true"
-                growingScrollToLoad="true"
+                growingScrollToLoad="false"
                 updateFinished=".onUpdateFinished"
                 selectionChange=".onSelectionChange"
+                growingThreshold="10"
             >
                 <headerToolbar>
                     <OverflowToolbar>
@@ -41,13 +42,21 @@
                         </SearchField>
                         <ToolbarSpacer id="myToolbarSpacer"/>
                         <Button id="sortButton" press=".onOpenViewSettings" icon="sap-icon://sort" type="Transparent" />
+                        <Button
+                        id="filterButton"
+                        press=".onOpenViewSettings"
+                        icon="sap-icon://filter"
+                        type="Transparent"/>
+                        <ToolbarSpacer/>
                     </OverflowToolbar>
                 </headerToolbar>
                 <items>
                     <ObjectListItem type="Navigation" press=".onSelectionChange" 
-                    title="{Description}" intro="{StatusText}" number="{ObjectId}">
+                        title="{Description}" intro="{ObjectId}" >
                         <attributes>
-                            <ObjectAttribute id="__attribute1" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />
+                            
+                            <ObjectAttribute id="__attribute1" text="{StatusText}" />
+                            <ObjectAttribute id="__attribute2" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />                            
        
                         </attributes>
                     </ObjectListItem>

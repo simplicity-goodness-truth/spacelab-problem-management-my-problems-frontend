@@ -1,3 +1,17 @@
+const statusNamesArray = Object.freeze(
+    class statusNames {
+        static new = 'E0001'
+        static approved = 'E0015';
+        static inProcess = 'E0002';
+        static customerAction = 'E0003';
+        static solutionProvided = 'E0005';
+        static confirmed = 'E0008';
+        static withdrawn = 'E0010';
+        static onApproval = 'E0016';
+        static informationRequested = 'E0017';
+    });
+
+    
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -71,7 +85,7 @@ sap.ui.define([
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
-       
+
         /**
          * Before form is rendered
         */
@@ -84,7 +98,7 @@ sap.ui.define([
 
             this._filterListPerApplicationConfiguration();
         },
-        
+
         /**
          * Refresh from detail form is triggered       
          */
@@ -236,6 +250,37 @@ sap.ui.define([
          */
         onConfirmViewSettingsDialog: function (oEvent) {
 
+            var aFilterItems = oEvent.getParameter("filterItems"),
+                aFilters = [],
+                aCaptions = [],
+                t = this;
+
+            aFilterItems.forEach(function (oItem) {
+                switch (oItem.getKey()) {
+                    case "openProblems":
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("new")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("approved")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("inProcess")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("customerAction")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("solutionProvided")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("onApproval")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("informationRequested")));
+
+                        break;
+                    case "closedProblems":
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("confirmed")));
+                        aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("withdrawn")));
+                        break;
+                    default:
+                        break;
+                }
+                aCaptions.push(oItem.getText());
+            });
+            this._oListFilterState.aFilter = aFilters;
+            this._updateFilterBar(aCaptions.join(", "));
+            this._applyFilterSearch();
+
+
             this._applySortGroup(oEvent);
         },
 
@@ -310,6 +355,20 @@ sap.ui.define([
         /* begin: internal methods                                     */
         /* =========================================================== */
 
+        /*
+        * Get status code
+        */
+        _getStatusCode: function (sStatusName) {
+
+            for (var key in statusNamesArray) {
+
+                if (sStatusName == key) {
+
+                    return statusNamesArray[key];
+
+                }
+            }
+        },
 
 
         /**
