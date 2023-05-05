@@ -24,7 +24,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         {path: 'Tdid', operator: 'EQ', value1: 'SU99'},
                                         {path: 'Tdid', operator: 'EQ', value1: 'SURS'},
                                         {path: 'Tdid', operator: 'EQ', value1: 'SUSO'},
-                                        {path: 'Tdid', operator: 'EQ', value1: 'SUBI'}
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SUBI'},
+                                        {path: 'Tdid', operator: 'EQ', value1: 'SU30'}
                                         ]
                                 }">
                                 <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{UserText}" timestamp="{DateTimeText}" text="{TextString}" sender="{TdidTxt}" />
@@ -40,7 +41,7 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                             showIcons="true"
                             uploadEnabled="{runtimeModel>/editModeActive}"
                             terminationEnabled="true"
-                            fileTypes="jpeg,csv,xls,txt,doc,png,docx,xlsx,jpg,pdf,eml,sar,zip,rar"
+                            fileTypes="jpeg,csv,xls,txt,doc,png,docx,xlsx,jpg,pdf,eml,sar,zip,rar,log"
                             maxFileNameLength="255"
                             maxFileSize="10"
                             mediaTypes="application/pdf,text/plain,application/msword,image/png,text/csv,text/html,application/zip,image/jpeg,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream,message/rfc822,application/vnd.sar,application/zip,application/vnd.rar,application/x-rar-compressed,application/x-zip-compressed"
@@ -50,7 +51,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                             afterItemAdded="onAfterItemAdded"
                             noDataDescription="{i18n>noAttachmentsDescription}"
                             noDataText="{i18n>noAttachmentsText}"
-                            mediaTypeMismatch = "onMediaTypeMismatch"                    
+                            mediaTypeMismatch = "onMediaTypeMismatch"       
+                            fileTypeMismatch = "onFileTypeMismatch"             
                         >
                                 <upload:toolbar>
                                     <OverflowToolbar id="OverflowToolbar">
@@ -124,7 +126,7 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
 
                                     <ColumnListItem id="tableProblemDetailsItemPostingDate">
                                         <cells>
-                                            <Text text="{i18n>postingDateTitle}" width="100%" id="tableProblemDetailsLabelPostingDate" />
+                                            <Text text="{i18n>problemDate}" width="100%" id="tableProblemDetailsLabelPostingDate" />
                                             <Text text="{ path: 'PostingDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy' }}" width="100%" id="tableProblemDetailsFieldPostingDate" />
                                         </cells>
                                     </ColumnListItem>
@@ -134,12 +136,12 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             <Text text="{CreatedAt}" width="100%" id="tableProblemDetailsFieldCreationDate" />
                                         </cells>
                                     </ColumnListItem>
-                                    <ColumnListItem id="tableProblemDetailsItemChangeDate">
+                                    <!-- <ColumnListItem id="tableProblemDetailsItemChangeDate">
                                         <cells>
                                             <Text text="{i18n>changeDateTitle}" width="100%" id="tableProblemDetailsLabelChangeDate" />
                                             <Text text="{ChangedAt}" width="100%" id="tableProblemDetailsFieldChangeDate" />
                                         </cells>
-                                    </ColumnListItem>
+                                    </ColumnListItem> -->
                                     <ColumnListItem id="tableProblemDetailsItemRequestorName">
                                         <cells>
                                             <Text text="{i18n>requesterNameTitle}" width="100%" id="tableProblemDetailsLabelRequestorName" />

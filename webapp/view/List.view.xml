@@ -1,14 +1,14 @@
-<mvc:View controllerName="zslpmmyprb.controller.List" xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc">
+<mvc:View controllerName="zslpmmyprb.controller.List" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc">
     <semantic:SemanticPage id="listPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
         <semantic:titleHeading>
             <VBox>
-            <Title id="listPageTitle" text="{listView>/title}" level="H2" />
+                <Title id="listPageTitle" text="{listView>/title}" level="H2" />
                 <HBox>
-                <Text text="{ path: 'runtimeModel>/SystemUser/FullName'}" id="systemUserName" class="sapUiTinyMarginEnd" />
+                    <Text text="{ path: 'runtimeModel>/SystemUser/FullName'}" id="systemUserName" class="sapUiTinyMarginEnd" />
                     <Text text="/" width="100%" id="subHeaderSlash" class="sapUiTinyMarginEnd" />
                     <Text text="{ path: 'runtimeModel>/SystemUser/CompanyName'}" id="systemUserCompanyName" />
-                    </HBox>
-                    </VBox>
+                </HBox>
+            </VBox>
         </semantic:titleHeading>
         <semantic:content>
             <!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
@@ -28,10 +28,10 @@
                 noDataText="{listView>/noDataText}"
                 mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
                 growing="true"
-                growingScrollToLoad="true"
+                growingScrollToLoad="false"
                 updateFinished=".onUpdateFinished"
                 selectionChange=".onSelectionChange"
-            >
+                growingThreshold="10" >
                 <headerToolbar>
                     <OverflowToolbar>
                         <SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>listSearchTooltip}" search=".onSearch" width="auto">
@@ -41,14 +41,20 @@
                         </SearchField>
                         <ToolbarSpacer id="myToolbarSpacer"/>
                         <Button id="sortButton" press=".onOpenViewSettings" icon="sap-icon://sort" type="Transparent" />
+                        <Button
+                        id="filterButton"
+                        press=".onOpenViewSettings"
+                        icon="sap-icon://filter"
+                        type="Transparent"/>
+                        <ToolbarSpacer/>
                     </OverflowToolbar>
                 </headerToolbar>
                 <items>
                     <ObjectListItem type="Navigation" press=".onSelectionChange" 
-                    title="{Description}" intro="{StatusText}" number="{ObjectId}">
+                        title="{Description}" intro="{ObjectId}" >
                         <attributes>
-                            <ObjectAttribute id="__attribute1" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />
-       
+                            <ObjectAttribute id="__attribute1" text="{StatusText}" />
+                            <ObjectAttribute id="__attribute2" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />
                         </attributes>
                     </ObjectListItem>
                 </items>
