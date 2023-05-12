@@ -340,28 +340,24 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                t._createProblemText(t.Guid, textTypes.additionalInformation, t._getProblemRequesterUpdateDialogText(),
-                    function () {
-
-                        t.onCloseProblemRequesterUpdateDialog();
-                        t._refreshView();
-                        t.getView().byId("textsList").getBinding("items").refresh();
-
-                    });
+                  var oPayload = {};
+                  oPayload.Status = t.Status;
 
 
-                //var oPayload = {};
-                // oPayload.Note = t._getProblemRequesterUpdateDialogText();
+                 sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
+                     t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
+                     t, function () {
 
-                // sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
-                //     t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
-                //     t, function () {
-
-                //         t.onCloseProblemRequesterUpdateDialog();
-                //         t._refreshView();
-                //         t.getView().byId("textsList").getBinding("items").refresh();
-
-                //     });
+                        t._createProblemText(t.Guid, textTypes.additionalInformation, t._getProblemRequesterUpdateDialogText(),
+                        function () {
+    
+                            t.onCloseProblemRequesterUpdateDialog();
+                            t._refreshView();
+                            t.getView().byId("textsList").getBinding("items").refresh();
+    
+                        });
+                     });
+             
             });
 
         },
