@@ -6,7 +6,7 @@
     "conn_password": "Support200",
     "conn_client" : "200", 
     "abap_package": "YSLPM",
-    "abap_transport":"SOLK900322",
+    "abap_transport":"SOLK900334",
     "abap_bsp": "YSLPMMYPRB",
     "abap_bsp_text": "SpaceLab: My Problems"
 }
