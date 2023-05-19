@@ -28,7 +28,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         {path: 'Tdid', operator: 'EQ', value1: 'SU30'}
                                         ]
                                 }">
-                                <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{UserText}" timestamp="{DateTimeText}" text="{TextString}" sender="{TdidTxt}" />
+                                <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{TdidTxt}" 
+                                    timestamp="{ path: 'DateTimeText', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy HH:mm:ss' }}" text="{TextString}" sender="{UserText}" />
                             </List>
                         </content>
                     </IconTabFilter>

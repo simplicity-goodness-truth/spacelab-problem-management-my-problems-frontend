@@ -74,7 +74,12 @@ sap.ui.define([
             var oEventBus = sap.ui.getCore().getEventBus();
             // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
             oEventBus.subscribe("ListAction", "onRefreshDetailFromList", this.onRefreshDetailFromList, this);
+            
+            // Disable drag and drop for UploadSet, as it is 
+            // not working properly, when not supported
+            // file type/media is supported
 
+            this._disableUploadSetDragAndDrop();
 
         },
 
@@ -89,6 +94,9 @@ sap.ui.define([
 
             sap.m.MessageBox.error(this.getResourceBundle().getText("fileFormatIsNotSupported"));
 
+            var oUploadSet = this.byId("problemUploadSet");
+            oUploadSet.removeAllIncompleteItems();
+
         },
         /**
         * Selected file format mismatch
@@ -96,6 +104,9 @@ sap.ui.define([
         onMediaTypeMismatch: function () {
 
             sap.m.MessageBox.error(this.getResourceBundle().getText("fileFormatIsNotSupported"));
+
+            var oUploadSet = this.byId("problemUploadSet");
+            oUploadSet.removeAllIncompleteItems();
 
         },
 
@@ -250,6 +261,25 @@ sap.ui.define([
         /* begin: internal methods                                     */
         /* =========================================================== */
 
+        /*
+        * Disable drag and drop function for UploadSet
+        */
+        _disableUploadSetDragAndDrop: function () {
+
+            this.getView().byId("problemUploadSet").addDelegate({
+                ondragenter: function (oEvent) {
+                    oEvent.stopPropagation()
+                },
+                ondragover: function (oEvent) {
+                    oEvent.stopPropagation()
+                },
+                ondrop: function (oEvent) {
+                    oEvent.stopPropagation()
+                }
+            }, true);
+
+        },
+
         /**
         * Vulnerabilities clearing
         */
@@ -338,24 +368,24 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                  var oPayload = {};
-                  oPayload.Status = t.Status;
+                var oPayload = {};
+                oPayload.Status = t.Status;
 
 
-                 sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
-                     t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
-                     t, function () {
+                sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
+                    t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
+                    t, function () {
 
                         t._createProblemText(t.Guid, textTypes.additionalInformation, t._getProblemRequesterUpdateDialogText(),
-                        function () {
-    
-                            t.onCloseProblemRequesterUpdateDialog();
-                            t._refreshView();
-                            t.getView().byId("textsList").getBinding("items").refresh();
-    
-                        });
-                     });
-             
+                            function () {
+
+                                t.onCloseProblemRequesterUpdateDialog();
+                                t._refreshView();
+                                t.getView().byId("textsList").getBinding("items").refresh();
+
+                            });
+                    });
+
             });
 
         },
