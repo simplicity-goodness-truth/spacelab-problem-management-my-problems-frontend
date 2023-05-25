@@ -1,13 +1,14 @@
 <mvc:View controllerName="zslpmmyprb.controller.Detail" xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:mvc="sap.ui.core.mvc" 
 xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
     <semantic:SemanticPage id="detailPage" busy="{detailView>/busy}" busyIndicatorDelay="{detailView>/delay}"
-        showFooter="{= ${RequesterWithdrawEnabled} || ${RequesterUpdateEnabled} ||  ${RequesterConfirmEnabled} || ${RequesterReplyEnabled} ? true : false }">
+        showFooter="{= ${RequesterWithdrawEnabled} || ${RequesterUpdateEnabled} ||  ${RequesterConfirmEnabled} || ${RequesterReplyEnabled} ? true : false }" toggleHeaderOnTitleClick="false" headerPinnable="false">
         <semantic:titleHeading>
             <Title text="{ObjectId}: {Description}" level="H2" id="fieldTitle" />
         </semantic:titleHeading>
         <semantic:headerContent>            
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemStatusTitle}: {StatusText}" id="fieldStatus" />
-            <ObjectAttribute xmlns="sap.m" text="{i18n>problemPriorityTitle}: {PriorityText}" id="fieldPriority" />
+            <ObjectAttribute xmlns="sap.m" text="{i18n>problemPriorityTitle}: {PriorityText}" id="fieldPriority"
+                visible="{= ${ShowPriorities} ? true: false }"/>
         </semantic:headerContent>
         <semantic:content>
             <IconTabBar id="iconTabBar">
@@ -28,7 +29,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         {path: 'Tdid', operator: 'EQ', value1: 'SU30'}
                                         ]
                                 }">
-                                <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{UserText}" timestamp="{DateTimeText}" text="{TextString}" sender="{TdidTxt}" />
+                                <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{TdidTxt}" 
+                                timestamp="{ path: 'DateTimeText', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy HH:mm:ss' }}" text="{TextString}" sender="{UserText}" />
                             </List>
                         </content>
                     </IconTabFilter>

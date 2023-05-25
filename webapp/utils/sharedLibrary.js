@@ -155,7 +155,6 @@ sap.ui.define([
             });
         },
 
-
         /**
         * Read OData entity
         */
@@ -240,11 +239,24 @@ sap.ui.define([
 
                 var oColumn = oColumns[k];
 
-                aCols.push({
-                    property: oTableTemplate.getCells()[k].getBindingInfo('text').parts[0].path,
-                    label: oColumn.getHeader().getText(),
-                    type: EdmType.String
-                });
+                if ( oTableTemplate.getCells()[k].getBindingInfo('text')) {
+                   
+                    aCols.push({
+                        property: oTableTemplate.getCells()[k].getBindingInfo('text').parts[0].path,
+                        label: oColumn.getHeader().getText(),
+                        type: EdmType.String
+                    });
+
+                }
+
+                if ( oTableTemplate.getCells()[k].getBindingInfo('state')) {
+                   
+                    aCols.push({
+                        property: oTableTemplate.getCells()[k].getBindingInfo('state').parts[0].path,
+                        label: oColumn.getHeader().getText(),
+                        type: EdmType.String
+                    });
+                }
             }
 
             return aCols;
