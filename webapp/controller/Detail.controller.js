@@ -856,7 +856,7 @@ sap.ui.define([
 
             this.getOwnerComponent().oListSelector.selectAListItem(sPath);
 
-
+            this._deactivateEditMode();
 
         },
 
