@@ -11,4 +11,5 @@ archive.zip
 .*_mta_build_tmp
 .rar
 .vscode
-.zip
+*.rar
+*.zip

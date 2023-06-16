@@ -87,6 +87,16 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+         * Refresh button has been pressed
+        */
+        onPressRefreshButton: function () {
+
+            this.onRefresh();
+            return;
+
+        },
+
+        /**
          * Before form is rendered
         */
         onBeforeRendering: function () {
@@ -127,7 +137,13 @@ sap.ui.define([
 
             // update the list object counter after new data is loaded
 
-            this._updateListItemCount(oEvent.getParameter("total"));
+            // this._updateListItemCount(oEvent.getParameter("total"));
+
+            // Above is a standard way to take count of problems, which comes with an application template and works only when $count is called
+            // Below is a custom workaround, as we set "defaultCountMode" to "None" in manifest.json
+            // to avoid explicit call of a $count everytime a list is loaded (not required due to performance and caching reasons)
+
+            this._updateListItemCount(Object.keys(oEvent.getSource().getBinding("items").getModel().oData).length);
 
             for (var i = 0; i < this._oList.getItems().length; i++) {
                 sObjectIds.push(this._oList.getItems()[i].getProperty('number'));
