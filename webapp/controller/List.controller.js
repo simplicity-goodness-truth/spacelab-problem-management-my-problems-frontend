@@ -10,7 +10,7 @@ const statusNamesArray = Object.freeze(
         static onApproval = 'E0016';
         static informationRequested = 'E0017';
     });
-    
+
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -84,6 +84,17 @@ sap.ui.define([
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
+
+        /**
+        * Refresh button has been pressed
+        */
+        
+        onPressRefreshButton: function () {
+
+            this.onRefresh();
+            return;
+
+        },
 
         /**
          * Before form is rendered
@@ -264,7 +275,7 @@ sap.ui.define([
                         aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("solutionProvided")));
                         aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("onApproval")));
                         aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("informationRequested")));
-                        
+
                         break;
                     case "closedProblems":
                         aFilters.push(new Filter("Status", FilterOperator.EQ, t._getStatusCode("confirmed")));
@@ -450,7 +461,7 @@ sap.ui.define([
          */
         _updateListItemCount: function (iTotalItems) {
             var sTitle;
-            // only update the counter if the length is final
+            // only update the counter if the length is final 
             if (this._oList.getBinding("items").isLengthFinal()) {
                 sTitle = this.getResourceBundle().getText("listTitleCount", [iTotalItems]);
                 this.getModel("listView").setProperty("/title", sTitle);

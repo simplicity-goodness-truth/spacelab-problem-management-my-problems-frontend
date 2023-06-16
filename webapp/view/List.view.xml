@@ -34,7 +34,7 @@
                 growingThreshold="10" >
                 <headerToolbar>
                     <OverflowToolbar>
-                        <SearchField id="searchField" showRefreshButton="true" tooltip="{i18n>listSearchTooltip}" search=".onSearch" width="auto">
+                        <SearchField id="searchField" showRefreshButton="false" tooltip="{i18n>listSearchTooltip}" search=".onSearch" width="auto">
                             <layoutData>
                                 <OverflowToolbarLayoutData minWidth="150px" maxWidth="240px" shrinkable="true" priority="NeverOverflow" />
                             </layoutData>
@@ -46,6 +46,7 @@
                         press=".onOpenViewSettings"
                         icon="sap-icon://filter"
                         type="Transparent"/>
+                        <Button id="refreshButton" press="onPressRefreshButton" icon="sap-icon://synchronize" type="Transparent" />
                         <ToolbarSpacer/>
                     </OverflowToolbar>
                 </headerToolbar>
