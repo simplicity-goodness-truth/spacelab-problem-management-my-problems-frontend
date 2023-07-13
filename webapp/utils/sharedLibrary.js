@@ -156,6 +156,42 @@ sap.ui.define([
         },
 
         /**
+        * Remove OData entity
+        */
+        removeEntity: function (sPath, sErroneousExecutionText, oView, bAsync, bShowErrorMessage, callback) {
+
+            var sODataPath = this.getODataPath(oView),
+                oModel = new sap.ui.model.odata.ODataModel(sODataPath, true);              
+
+            oModel.remove(sPath, {
+                async: bAsync,
+                success: function (oData) {
+
+                    callback(oData);
+
+                },
+                error: function (oError) {
+
+                    var sMessage;
+
+                    if (oError.response) {
+                        sMessage = JSON.parse(oError.response.body).error.message.value;
+                    }
+
+                    if (sErroneousExecutionText) {
+                        sMessage = sErroneousExecutionText + ':\n' + sMessage;
+                    }
+
+                    if (bShowErrorMessage) {
+                        sap.m.MessageBox.error(sMessage);
+                    } else {
+                        callback(sMessage);
+                    }
+                }
+            });
+        },
+
+        /**
         * Read OData entity
         */
         readEntity: function (sEntityName, sErroneousExecutionText, oView, bAsync, bShowErrorMessage, callback) {
