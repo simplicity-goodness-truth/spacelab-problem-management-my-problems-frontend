@@ -194,7 +194,14 @@ sap.ui.define([
             var sQuery = oEvent.getParameter("query");
 
             if (sQuery) {
-                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.Contains, sQuery)];
+                
+                // Search by description text 
+
+                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.EQ, sQuery)];
+                
+                // Search by free text  in communication
+
+                this._oListFilterState.aSearch = [new Filter("Note", FilterOperator.EQ, sQuery)];
             } else {
                 this._oListFilterState.aSearch = [];
             }
@@ -475,6 +482,8 @@ sap.ui.define([
         _applyFilterSearch: function () {
             var aFilters = this._oListFilterState.aSearch.concat(this._oListFilterState.aFilter),
                 oViewModel = this.getModel("listView");
+
+
             this._oList.getBinding("items").filter(aFilters, "Application");
             // changes the noDataText of the list in case there are no filter results
             if (aFilters.length !== 0) {
