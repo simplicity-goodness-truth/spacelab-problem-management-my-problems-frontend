@@ -11,7 +11,7 @@ const statusNamesArray = Object.freeze(
         static informationRequested = 'E0017';
     });
 
-    
+
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -200,7 +200,15 @@ sap.ui.define([
             var sQuery = oEvent.getParameter("query");
 
             if (sQuery) {
-                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.Contains, sQuery)];
+
+                // Search by description text 
+
+                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.EQ, sQuery)];
+
+                // Search by free text  in communication
+
+                this._oListFilterState.aSearch = [new Filter("Note", FilterOperator.EQ, sQuery)];
+
             } else {
                 this._oListFilterState.aSearch = [];
             }
