@@ -14,3 +14,4 @@ archive.zip
 *.rar
 *.zip
 .nwabaprc
+*ui5*.yaml
