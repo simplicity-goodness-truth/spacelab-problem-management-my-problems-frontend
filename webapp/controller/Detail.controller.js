@@ -1,29 +1,3 @@
-// Constants classes
-
-const textTypes = Object.freeze(
-    class textTypes {
-        static reply = 'SU01';
-        static description = 'SU99';
-        static reproductionSteps = 'SURS';
-        static internalNote = 'SU04';
-        static solution = 'SUSO';
-        static businessConsequences = 'SUBI';
-        static additionalInformation = 'SU30';
-    });
-
-const statusNames = Object.freeze(
-    class statusNames {
-        static new = 'E0001'
-        static approved = 'E0015';
-        static inProcess = 'E0002';
-        static customerAction = 'E0003';
-        static solutionProvided = 'E0005';
-        static confirmed = 'E0008';
-        static withdrawn = 'E0010';
-        static onApproval = 'E0016';
-        static informationRequested = 'E0017';
-    });
-
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -73,13 +47,25 @@ sap.ui.define([
             // Bus for events from a list
             var oEventBus = sap.ui.getCore().getEventBus();
             // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
-            oEventBus.subscribe("ListAction", "onRefreshDetailFromList", this.onRefreshDetailFromList, this);            
+            oEventBus.subscribe("ListAction", "onRefreshDetailFromList", this.onRefreshDetailFromList, this);
 
             // Disable drag and drop for UploadSet, as it is 
             // not working properly, when not supported
             // file type/media is supported
 
             this._disableUploadSetDragAndDrop();
+
+            // Getting frontend constants
+
+            this.oFrontendConstants = this.getOwnerComponent().getModel("frontendConstants");
+
+            // Filling status names constants
+
+            this.statusNames = Object.freeze(this._setStatusNamesConstants());
+
+            // Filling text types constants
+
+            this.textTypes = Object.freeze(this._setTextTypesConstants());
 
 
         },
@@ -263,6 +249,53 @@ sap.ui.define([
         /* =========================================================== */
 
         /*
+        * Set text types constants        
+        */
+        _setTextTypesConstants: function () {
+
+            const textTypes = {
+
+            };
+
+            for (var i = 0; i < this.oFrontendConstants.oData.FrontendConstants.results.length; i++) {
+
+                if (this.oFrontendConstants.oData.FrontendConstants.results[i].Class == 'textTypes') {
+
+                    textTypes[this.oFrontendConstants.oData.FrontendConstants.results[i].Parameter] = this.oFrontendConstants.oData.FrontendConstants.results[i].Value;
+
+                }
+
+            }
+
+            return textTypes;
+
+        },
+
+
+        /*
+        * Set status names constants        
+        */
+        _setStatusNamesConstants: function () {
+
+            const statusNames = {
+
+            };
+
+            for (var i = 0; i < this.oFrontendConstants.oData.FrontendConstants.results.length; i++) {
+
+                if (this.oFrontendConstants.oData.FrontendConstants.results[i].Class == 'statusNames') {
+
+                    statusNames[this.oFrontendConstants.oData.FrontendConstants.results[i].Parameter] = this.oFrontendConstants.oData.FrontendConstants.results[i].Value;
+
+                }
+
+            }
+
+            return statusNames;
+
+        },
+
+        /*
         * Disable drag and drop function for UploadSet
         */
         _disableUploadSetDragAndDrop: function () {
@@ -380,7 +413,7 @@ sap.ui.define([
                     t.getResourceBundle().getText("problemUpdatedSuccessfully", t.ObjectId), t.getResourceBundle().getText("problemUpdateFailure"), null,
                     t, function () {
 
-                        t._createProblemText(t.Guid, textTypes.additionalInformation, t._getProblemRequesterUpdateDialogText(),
+                        t._createProblemText(t.Guid, t.textTypes.additionalInformation, t._getProblemRequesterUpdateDialogText(),
                             function () {
 
                                 t.onCloseProblemRequesterUpdateDialog();
@@ -475,11 +508,14 @@ sap.ui.define([
         */
         _getStatusCode: function (sStatusName) {
 
-            for (var key in statusNames) {
+            var t = this;
+
+            //for (var key in statusNames) {
+            for (var key in this.statusNames) {
 
                 if (sStatusName == key) {
 
-                    return statusNames[key];
+                    return t.statusNames[key];
 
                 }
             }
@@ -494,28 +530,29 @@ sap.ui.define([
                 t = this,
                 oPayload = {};
 
+
+
             sharedLibrary.confirmAction(sText, function () {
 
                 switch (t.Status) {
                     case t._getStatusCode("customerAction"):
 
-                        oPayload.Status = statusNames.inProcess;
+                        oPayload.Status = t.statusNames.inProcess;
                         break;
 
                     case t._getStatusCode("solutionProvided"):
 
-                        oPayload.Status = statusNames.inProcess;
+                        oPayload.Status = t.statusNames.inProcess;
                         break;
 
                     case t._getStatusCode("informationRequested"):
 
-                        oPayload.Status = statusNames.onApproval;
+                        oPayload.Status = t.statusNames.onApproval;
                         break;
 
                 }
 
                 oPayload.Note = t._getRequesterReplyText();
-
 
                 sharedLibrary.updateEntityByEdmGuidKey(t.Guid, oPayload, "ProblemSet",
                     null, t.getResourceBundle().getText("problemUpdateFailure"), null,
@@ -649,7 +686,7 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                t.problemClosurePayload.Status = statusNames.confirmed;
+                t.problemClosurePayload.Status = t.statusNames.confirmed;
 
                 // Check if additional comments should be added
 
@@ -692,7 +729,7 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                t.problemClosurePayload.Status = statusNames.withdrawn;
+                t.problemClosurePayload.Status = t.statusNames.withdrawn;
 
                 // Check if additional comments should be added
 

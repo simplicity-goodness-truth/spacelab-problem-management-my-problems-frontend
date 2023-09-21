@@ -1,16 +1,3 @@
-const statusNamesArray = Object.freeze(
-    class statusNames {
-        static new = 'E0001'
-        static approved = 'E0015';
-        static inProcess = 'E0002';
-        static customerAction = 'E0003';
-        static solutionProvided = 'E0005';
-        static confirmed = 'E0008';
-        static withdrawn = 'E0010';
-        static onApproval = 'E0016';
-        static informationRequested = 'E0017';
-    });
-
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -75,9 +62,6 @@ sap.ui.define([
             // 1. ChannelName, 2. EventName, 3. Function to be executed, 4. Listener
             this.oEventBus.subscribe("DetailAction", "onRefreshListFromDetail", this.onRefreshListFromDetail, this);
 
-            var oExecutionContext = this.getOwnerComponent().getModel("executionContext");
-
-
 
         },
 
@@ -88,7 +72,7 @@ sap.ui.define([
         /**
         * Refresh button has been pressed
         */
-        
+
         onPressRefreshButton: function () {
 
             this.onRefresh();
@@ -100,6 +84,11 @@ sap.ui.define([
          * Before form is rendered
         */
         onBeforeRendering: function () {
+
+            // Set frontend constants
+
+            this._setFrontendConstants();
+
             // Set current user properties header
 
             this._setUserPropertiesHeader();
@@ -107,6 +96,8 @@ sap.ui.define([
             // Filter list per application configuration
 
             this._filterListPerApplicationConfiguration();
+
+
         },
 
         /**
@@ -194,11 +185,11 @@ sap.ui.define([
             var sQuery = oEvent.getParameter("query");
 
             if (sQuery) {
-                
+
                 // Search by description text 
 
                 this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.EQ, sQuery)];
-                
+
                 // Search by free text  in communication
 
                 this._oListFilterState.aSearch = [new Filter("Note", FilterOperator.EQ, sQuery)];
@@ -371,16 +362,58 @@ sap.ui.define([
         /* =========================================================== */
         /* begin: internal methods                                     */
         /* =========================================================== */
+
+        /*
+        * Set frontend constants
+        */
+
+        _setFrontendConstants: function () {
+
+            // Getting frontend constants
+
+            this.oFrontendConstants = this.getOwnerComponent().getModel("frontendConstants");
+
+            // Filling status names constants
+
+            this.statusNames = Object.freeze(this._setStatusNamesConstants());
+
+        },
+
+        /*
+        * Set status names constants        
+        */
+        _setStatusNamesConstants: function () {
+
+            const statusNames = {
+
+            };
+
+            for (var i = 0; i < this.oFrontendConstants.oData.FrontendConstants.results.length; i++) {
+
+                if (this.oFrontendConstants.oData.FrontendConstants.results[i].Class == 'statusNames') {
+
+                    statusNames[this.oFrontendConstants.oData.FrontendConstants.results[i].Parameter] = this.oFrontendConstants.oData.FrontendConstants.results[i].Value;
+
+                }
+
+            }
+
+            return statusNames;
+
+        },
+
         /*
         * Get status code
         */
         _getStatusCode: function (sStatusName) {
 
-            for (var key in statusNamesArray) {
+            var t = this;
+
+            for (var key in t.statusNames) {
 
                 if (sStatusName == key) {
 
-                    return statusNamesArray[key];
+                    return t.statusNames[key];
 
                 }
             }
