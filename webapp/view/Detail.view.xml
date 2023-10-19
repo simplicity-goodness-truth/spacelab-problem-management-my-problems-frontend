@@ -28,7 +28,7 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         ]
                                 }">
                                 <FeedListItem id="communicationItem" iconDensityAware="false" showIcon="false" info="{TdidTxt}" 
-                                    timestamp="{ path: 'DateTimeText', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy HH:mm:ss' }}" text="{TextString}" sender="{UserText}" />
+                                    timestamp="{ path: 'DateTimeText', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy HH:mm:ss' }}" text="{TextString}" sender="{UserText}" senderActive="false" />
                             </List>
                         </content>
                     </IconTabFilter>
@@ -69,8 +69,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                         <content>
                             <Table xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic" xmlns:footerbar="sap.ushell.ui.footerbar" xmlns="sap.m" id="tableProblemDetails" inset="false">
                                 <columns>
-                                    <Column id="tableProblemDetailsColumnLabel" width="30%" />
-                                    <Column id="tableProblemDetailsColumnField" width="70%" />
+                                    <Column id="tableProblemDetailsColumnLabel" width="40%" />
+                                    <Column id="tableProblemDetailsColumnField" width="60%" />
                                 </columns>
                                 <items>
                                     <ColumnListItem id="tableProblemDetailsItemDescription">
