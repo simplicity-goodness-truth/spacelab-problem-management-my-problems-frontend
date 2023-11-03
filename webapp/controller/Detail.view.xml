@@ -85,17 +85,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             <Text text="{ path: 'Description'}" width="100%" id="tableProblemDetailsFieldDescription" />
                                         </cells>
                                     </ColumnListItem>
-                                    <!-- <ColumnListItem id="tableProblemDetailsItemCategory">
-                                        <cells>
-                                            <Text text="{i18n>categoryTitle}" width="100%" id="tableProblemDetailsLabelCatSchema" />
-                                            <HBox id="tableProblemDetailsItemCategoryHBox">
-                                                <Text text="{ path: 'CatSchemaName'}" width="100%" id="tableProblemDetailsFieldCatSchemaName" class="sapUiTinyMarginEnd" />
-                                                <Text text="/" width="100%" id="tableProblemDetailsSlash" class="sapUiTinyMarginEnd" />
-                                                <Text text="{ path: 'CatSchemaNodeName'}" width="100%" id="tableProblemDetailsFieldCatSchemaNodeName" />
-                                            </HBox>
-                                        </cells>
-                                    </ColumnListItem> -->
-
 
                                     <ColumnListItem id="tableProblemDetailsItemContactPersonEmail" visible="{= ${ContactEmail} ? true : false}">
                                         <cells>
@@ -105,8 +94,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
-
-
                                     <ColumnListItem id="tableProblemDetailsItemProduct">
                                         <cells>
                                             <Text text="{i18n>productTitle}" width="100%" id="tableProblemDetailsLabelProduct" />
@@ -115,17 +102,12 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
-
-
-
                                     <ColumnListItem id="tableProblemDetailsItemSystem" visible="{= ${SAPSystemName} ? true : false}">
                                         <cells>
                                             <Text text="{i18n>systemTitle}" width="100%" id="tableProblemDetailsLabelSystem" />                                        
                                             <Text text="{SAPSystemName} {SAPSystemDescription} ({SAPSystemRole})"  width="100%" id="tableProblemDetailsFieldSystemText" />                                            
                                         </cells>
                                     </ColumnListItem>
-
-
                                     <ColumnListItem id="tableProblemDetailsItemPostingDate">
                                         <cells>
                                             <Text text="{i18n>problemDate}" width="100%" id="tableProblemDetailsLabelPostingDate" />
@@ -138,12 +120,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             <Text text="{CreatedAt}" width="100%" id="tableProblemDetailsFieldCreationDate" />
                                         </cells>
                                     </ColumnListItem>
-                                    <!-- <ColumnListItem id="tableProblemDetailsItemChangeDate">
-                                        <cells>
-                                            <Text text="{i18n>changeDateTitle}" width="100%" id="tableProblemDetailsLabelChangeDate" />
-                                            <Text text="{ChangedAt}" width="100%" id="tableProblemDetailsFieldChangeDate" />
-                                        </cells>
-                                    </ColumnListItem> -->
                                     <ColumnListItem id="tableProblemDetailsItemRequestorName">
                                         <cells>
                                             <Text text="{i18n>requesterNameTitle}" width="100%" id="tableProblemDetailsLabelRequestorName" />
@@ -168,12 +144,7 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                     <ColumnListItem id="tableProblemDetailsItemSLAIrtPerc">
                                         <cells>
                                             <Text text="{i18n>SLAIrtPerc}" width="100%" id="tableProblemDetailsLabelSLAIrtPerc" />
-                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">
-                                                <!-- <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAsOnHold}  ? false : ${SLAIrtIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconIrtSLAOverdue"/>
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAsOnHold}  ? false : ${SLAIrtIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconIrtSLANotDue" />
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://pause" color="#053B70" visible="{=  ${SLAsOnHold}  ? true :  false }"  id="iconIrtSLAOnHold" />
-                                                <Text text="{=  ${SLAsOnHold}  ? ${StoredSLAIrtPerc} : ${SLAIrtPerc} } %" width="100%" id="tableProblemDetailsFieldSLAIrtPerc" /> -->
-
+                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">                                               
                                                 <ObjectStatus 
                                                 text="{=  ${IrtSLAOnHold}  ? ${StoredSLAIrtPerc} : ${SLAIrtPerc} } %" 	
                                                 state="{= ${IrtSLAOnHold}  ? 'Information' : ${SLAIrtIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
@@ -182,7 +153,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
-
                                     <ColumnListItem id="tableProblemDetailsItemSLAMptTimestamp">
                                         <cells>
                                             <Text text="{i18n>SLAMptTimestamp}" width="100%" id="tableProblemDetailsLabelSLAMptTimestamp" />
@@ -193,11 +163,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         <cells>
                                             <Text text="{i18n>SLAMptPerc}" width="100%" id="tableProblemDetailsLabelSLAMptPerc" />
                                             <HBox id="tableProblemDetailsItemSLAMptHBox">
-                                                <!-- <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAsOnHold}  ? false : ${SLAMptIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconMptSLAOverdue"/>
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAsOnHold}  ? false : ${SLAMptIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconMptSLANotDue" />
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://pause" color="#053B70" visible="{=  ${SLAsOnHold}  ? true :  false }"  id="iconMptSLAOnHold" />
-                                                <Text text="{SLAMptPerc} %" width="100%" id="tableProblemDetailsFieldSLAMptPerc" /> -->
-
                                                 <ObjectStatus								
                                                 text="{=  ${MptSLAOnHold}  ? ${StoredSLAMptPerc} : ${SLAMptPerc} } %"			
                                                 state="{= ${MptSLAOnHold}  ? 'Information' : ${SLAMptIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
@@ -209,8 +174,7 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                 </items>
                             </Table>
                         </content>
-                    </IconTabFilter>
-                    
+                    </IconTabFilter>                    
                 </items>
             </IconTabBar>
         </semantic:content>
