@@ -161,21 +161,10 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                 </ColumnListItem>
                                     <ColumnListItem id="tableProblemDetailsItemSLAIrtTimestamp">
                                         <cells>
-                                            <Text text="{i18n>SLAIrtTimestamp}" width="100%" id="tableProblemDetailsLabelSLAIrtTimestamp" />
-                                            <Text text="{SLAIrtTimestamp}" width="100%" id="tableProblemDetailsFieldSLAIrtTimestamp" />
-                                        </cells>
-                                    </ColumnListItem>
-                                    <ColumnListItem id="tableProblemDetailsItemSLAIrtPerc">
-                                        <cells>
-                                            <Text text="{i18n>SLAIrtPerc}" width="100%" id="tableProblemDetailsLabelSLAIrtPerc" />
-                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">
-                                                <!-- <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAsOnHold}  ? false : ${SLAIrtIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconIrtSLAOverdue"/>
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAsOnHold}  ? false : ${SLAIrtIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconIrtSLANotDue" />
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://pause" color="#053B70" visible="{=  ${SLAsOnHold}  ? true :  false }"  id="iconIrtSLAOnHold" />
-                                                <Text text="{=  ${SLAsOnHold}  ? ${StoredSLAIrtPerc} : ${SLAIrtPerc} } %" width="100%" id="tableProblemDetailsFieldSLAIrtPerc" /> -->
-
+                                            <Text text="{i18n>SLAIrtTimestamp}" width="100%" id="tableProblemDetailsLabelSLAIrtTimestamp" />                                            
+                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">                                               
                                                 <ObjectStatus 
-                                                text="{=  ${IrtSLAOnHold}  ? ${StoredSLAIrtPerc} : ${SLAIrtPerc} } %" 	
+                                                text="{SLAIrtTimestamp}" 	
                                                 state="{= ${IrtSLAOnHold}  ? 'Information' : ${SLAIrtIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
                                                 icon="{= ${FirstReactionDate}  ? 'sap-icon://complete' : ${IrtSLAOnHold} ? 'sap-icon://pause' : 'sap-icon://pending' }"
                                                 id="SLAIrtPercObjectStatus"/>
@@ -186,20 +175,9 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                     <ColumnListItem id="tableProblemDetailsItemSLAMptTimestamp">
                                         <cells>
                                             <Text text="{i18n>SLAMptTimestamp}" width="100%" id="tableProblemDetailsLabelSLAMptTimestamp" />
-                                            <Text text="{SLAMptTimestamp}" width="100%" id="tableProblemDetailsFieldSLAMptTimestamp" />
-                                        </cells>
-                                    </ColumnListItem>
-                                    <ColumnListItem id="tableProblemDetailsItemSLAMptPerc">
-                                        <cells>
-                                            <Text text="{i18n>SLAMptPerc}" width="100%" id="tableProblemDetailsLabelSLAMptPerc" />
-                                            <HBox id="tableProblemDetailsItemSLAMptHBox">
-                                                <!-- <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://alert" color="#bd2106" visible="{= ${SLAsOnHold}  ? false : ${SLAMptIconBsp} === 'OVERDUE' ? true : false }" tooltip="{i18n>SLAOverdue}" id="iconMptSLAOverdue"/>
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://accept" color="#008000" visible="{= ${SLAsOnHold}  ? false : ${SLAMptIconBsp} === 'NOTDUE' ? true : false }" tooltip="{i18n>SLANotDue}" id="iconMptSLANotDue" />
-                                                <core:Icon class="sapUiSmallMarginEnd" src="sap-icon://pause" color="#053B70" visible="{=  ${SLAsOnHold}  ? true :  false }"  id="iconMptSLAOnHold" />
-                                                <Text text="{SLAMptPerc} %" width="100%" id="tableProblemDetailsFieldSLAMptPerc" /> -->
-
+                                            <HBox id="tableProblemDetailsItemSLAMptHBox">                                               
                                                 <ObjectStatus								
-                                                text="{=  ${MptSLAOnHold}  ? ${StoredSLAMptPerc} : ${SLAMptPerc} } %"			
+                                                text="{SLAMptTimestamp}"			
                                                 state="{= ${MptSLAOnHold}  ? 'Information' : ${SLAMptIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
                                                 icon="{= ${Status} === 'E0008' || ${Status} === 'E0010'? 'sap-icon://complete' : ${MptSLAOnHold} ? 'sap-icon://pause' : 'sap-icon://pending' }"
                                                 id="SLAMptPercObjectStatus"/>
