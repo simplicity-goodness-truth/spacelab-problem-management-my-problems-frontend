@@ -5,20 +5,21 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
         <semantic:titleHeading>
             <Title text="{ObjectId}: {Description}" level="H2" id="fieldTitle" />
         </semantic:titleHeading>
-        <semantic:headerContent>            
+        <semantic:headerContent>
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemStatusTitle}: {StatusText}" id="fieldStatus" />
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemPriorityTitle}: {PriorityText}" id="fieldPriority"
                 visible="{= ${ShowPriorities} ? true: false }"/>
+            <ObjectStatus icon="sap-icon://compare"  state="Error" visible="{= ${IsDisputeOpen} ? true : false }" id="disputeOpenIcon" 
+                press="onPressDisputeOpenIcon" active="true"/>
         </semantic:headerContent>
         <semantic:content>
             <IconTabBar id="iconTabBar">
-                <items>                                
+                <items>
                     <IconTabFilter id="tabCommunication" icon="sap-icon://comment" tooltip="{i18n>communicationIconTabBarText}" text="{i18n>communicationIconTabBarText}">
                         <content>
                             <TextArea id="communicationTabTextInputArea" value="" width="100%" rows="15" 
                                 visible="{= ${runtimeModel>/editModeActive} ? true: false }" placeholder="{i18n>enterReplyText}"/>
-                            
-                                <List id="textsList" showSeparators="Inner" busyIndicatorDelay="0"
+                            <List id="textsList" showSeparators="Inner" busyIndicatorDelay="0"
                                 items="{path: 'Text', 
                                     filters: [
                                         {path: 'Tdid', operator: 'EQ', value1: 'SU01'},
@@ -34,7 +35,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                             </List>
                         </content>
                     </IconTabFilter>
-
                     <IconTabFilter id="tabAttachments" icon="sap-icon://attachment" tooltip="{i18n>attachmentsIconTabBarText}" text="{i18n>attachmentsIconTabBarText}">
                         <content>
                             <upload:UploadSet
@@ -61,17 +61,14 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                         <ToolbarSpacer id="myToolbarSpacer" />
                                     </OverflowToolbar>
                                 </upload:toolbar>
-                                <upload:items>                        
-                                                
+                                <upload:items>
                                     <upload:UploadSetItem id="problemUploadSetItem" fileName="{Name}" mediaType="{Mimetype}" url="{DocumentId}"
                                         visibleEdit="false" visibleRemove="false" enabledRemove="false" openPressed="onFileNamePress"  />
                                 </upload:items>
                             </upload:UploadSet>
                         </content>
                     </IconTabFilter>
-
-
-                        <IconTabFilter id="tabDetails" icon="sap-icon://business-card" tooltip="{i18n>detailIconTabBarText}" text="{i18n>detailIconTabBarText}">
+                    <IconTabFilter id="tabDetails" icon="sap-icon://business-card" tooltip="{i18n>detailIconTabBarText}" text="{i18n>detailIconTabBarText}">
                         <content>
                             <Table xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic" xmlns:footerbar="sap.ushell.ui.footerbar" xmlns="sap.m" id="tableProblemDetails" inset="false">
                                 <columns>
@@ -95,37 +92,28 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             </HBox>
                                         </cells>
                                     </ColumnListItem> -->
-
-
                                     <ColumnListItem id="tableProblemDetailsItemContactPersonEmail" visible="{= ${ContactEmail} ? true : false}">
                                         <cells>
                                             <Text text="{i18n>contactPersonEmail}" width="100%" id="tableProblemDetailsLabelContactPersonEmail" />
-                                            <HBox id="tableProblemDetailsItemContactPersonEmailHBox">                                             
+                                            <HBox id="tableProblemDetailsItemContactPersonEmailHBox">
                                                 <Text text="{ path: 'ContactEmail'}" width="100%" id="tableProblemDetailsFieldContactPersonEmail" />
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
-
-
                                     <ColumnListItem id="tableProblemDetailsItemProduct">
                                         <cells>
                                             <Text text="{i18n>productTitle}" width="100%" id="tableProblemDetailsLabelProduct" />
-                                            <HBox id="tableProblemDetailsItemProductHBox">                                             
+                                            <HBox id="tableProblemDetailsItemProductHBox">
                                                 <Text text="{ path: 'ProductText'}" width="100%" id="tableProblemDetailsFieldProductText" />
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
-
-
-
                                     <ColumnListItem id="tableProblemDetailsItemSystem" visible="{= ${SAPSystemName} ? true : false}">
                                         <cells>
-                                            <Text text="{i18n>systemTitle}" width="100%" id="tableProblemDetailsLabelSystem" />                                        
-                                            <Text text="{SAPSystemName} {SAPSystemDescription} ({SAPSystemRole})"  width="100%" id="tableProblemDetailsFieldSystemText" />                                            
+                                            <Text text="{i18n>systemTitle}" width="100%" id="tableProblemDetailsLabelSystem" />
+                                            <Text text="{SAPSystemName} {SAPSystemDescription} ({SAPSystemRole})"  width="100%" id="tableProblemDetailsFieldSystemText" />
                                         </cells>
                                     </ColumnListItem>
-
-
                                     <ColumnListItem id="tableProblemDetailsItemPostingDate">
                                         <cells>
                                             <Text text="{i18n>problemDate}" width="100%" id="tableProblemDetailsLabelPostingDate" />
@@ -149,20 +137,20 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             <Text text="{i18n>requesterNameTitle}" width="100%" id="tableProblemDetailsLabelRequestorName" />
                                             <Text text="{RequestorFullName}" width="100%" id="tableProblemDetailsFieldRequestorName" />
                                         </cells>
-                                    </ColumnListItem>                                
-                                <ColumnListItem id="tableProblemDetailsItemFirstReaction" visible="{= ${FirstReactionDate} ? true : false}">
-                                    <cells>
-                                        <Text text="{i18n>firstReactionTitle}" width="100%" id="tableProblemDetailsLabelFirstReaction" />
+                                    </ColumnListItem>
+                                    <ColumnListItem id="tableProblemDetailsItemFirstReaction" visible="{= ${FirstReactionDate} ? true : false}">
+                                        <cells>
+                                            <Text text="{i18n>firstReactionTitle}" width="100%" id="tableProblemDetailsLabelFirstReaction" />
                                             <HBox id="tableProblemDetailsItemFirstReactionHBox">
-                                            <Text text="{ path: 'FirstReactionDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy' }}" width="100%" id="tableProblemDetailsFieldFirstReactionDate"  />
-                                            <Text text="{ path: 'FirstReactionTime', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern: 'HH:mm:ss' }}" width="100%" id="tableProblemDetailsFieldFirstReactionTime" class="sapUiTinyMarginBegin" />
-                                        </HBox>
-                                    </cells>
-                                </ColumnListItem>
+                                                <Text text="{ path: 'FirstReactionDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'dd.MM.yyyy' }}" width="100%" id="tableProblemDetailsFieldFirstReactionDate"  />
+                                                <Text text="{ path: 'FirstReactionTime', type: 'sap.ui.model.odata.type.Time', formatOptions: { pattern: 'HH:mm:ss' }}" width="100%" id="tableProblemDetailsFieldFirstReactionTime" class="sapUiTinyMarginBegin" />
+                                            </HBox>
+                                        </cells>
+                                    </ColumnListItem>
                                     <ColumnListItem id="tableProblemDetailsItemSLAIrtTimestamp">
                                         <cells>
-                                            <Text text="{i18n>SLAIrtTimestamp}" width="100%" id="tableProblemDetailsLabelSLAIrtTimestamp" />                                            
-                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">                                               
+                                            <Text text="{i18n>SLAIrtTimestamp}" width="100%" id="tableProblemDetailsLabelSLAIrtTimestamp" />
+                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">
                                                 <ObjectStatus 
                                                 text="{SLAIrtTimestamp}" 	
                                                 state="{= ${IrtSLAOnHold}  ? 'Information' : ${SLAIrtIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
@@ -171,11 +159,10 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                             </HBox>
                                         </cells>
                                     </ColumnListItem>
-
                                     <ColumnListItem id="tableProblemDetailsItemSLAMptTimestamp">
                                         <cells>
                                             <Text text="{i18n>SLAMptTimestamp}" width="100%" id="tableProblemDetailsLabelSLAMptTimestamp" />
-                                            <HBox id="tableProblemDetailsItemSLAMptHBox">                                               
+                                            <HBox id="tableProblemDetailsItemSLAMptHBox">
                                                 <ObjectStatus								
                                                 text="{SLAMptTimestamp}"			
                                                 state="{= ${MptSLAOnHold}  ? 'Information' : ${SLAMptIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
@@ -188,7 +175,6 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                             </Table>
                         </content>
                     </IconTabFilter>
-                    
                 </items>
             </IconTabBar>
         </semantic:content>
@@ -204,7 +190,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
             <Button text="{i18n>buttonRequesterConfirm}" press="onPressRequesterConfirm" id="buttonRequesterConfirm"    visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterConfirmEnabled}  ? true: false }" icon="sap-icon://sys-enter"/>
             <Button text="{i18n>buttonRequesterReply}" press="onPressRequesterReply" id="buttonRequesterReply"   
                 visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterReplyEnabled} ? true: false }" icon="sap-icon://response"/>
-                
+            <Button text="{i18n>buttonRequesterOpenDispute}" press="onPressRequesterOpenDispute" id="buttonRequesterOpenDispute"   
+                    visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterOpenDisputeEnabled} ? true: false }" icon="sap-icon://compare"/>
             <Button text="{i18n>buttonRequesterSaveAndReply}" press="onPressRequesterSaveAndReply" id="buttonRequesterSaveAndReply"   visible="{= ${runtimeModel>/editModeActive} ? true : false }"
                 icon="sap-icon://save" />
             <Button text="{i18n>buttonRequesterExitFromReplyMode}" press="onPressRequesterExitFromReplyMode" id="buttonRequesterExitFromReplyMode"  visible="{= ${runtimeModel>/editModeActive} ? true : false }" icon="sap-icon://decline"/>

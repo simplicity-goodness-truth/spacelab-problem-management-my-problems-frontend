@@ -75,6 +75,33 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+        * Requester pressed a dispute history icon
+        */
+        onPressDisputeOpenIcon: function () {
+
+            this._openDisputeHistoryDialog();
+
+        },
+
+        /**
+        * Closing a dispute history 
+        */
+        onCloseDisputeHistoryDialog: function () {
+
+            this._destroyDisputeHistoryDialog();
+
+        },
+
+        /**
+        * Requester pressed a button for a dispute opening
+        */
+        onPressRequesterOpenDispute: function () {
+
+            this._openProblemDispute();
+
+        },
+
+        /**
         * Selected file extension mismatch
         */
         onFileTypeMismatch: function () {
@@ -247,6 +274,89 @@ sap.ui.define([
         /* =========================================================== */
         /* begin: internal methods                                     */
         /* =========================================================== */
+
+        /**
+        * Destroy Dispute History dialog
+        */
+        _destroyDisputeHistoryDialog: function () {
+
+            this.oDisputeHistoryFragment.destroy(true);
+        },
+
+        /**
+        * Get Dispute History from backend
+        */
+        _setDisputeHistory: function () {
+
+            var t = this,
+                sErroneousExecutionText = this.getResourceBundle().getText("oDataModelReadFailure");
+
+            sharedLibrary.readEntitiesAssoiciationByEdmGuidKey("Problem", this.Guid, "DisputeHistory",
+                sErroneousExecutionText, this, false, false, function (oData) {
+
+                    t.oDisputeHistory = oData.results;
+
+                });
+        },
+
+        /*
+        * Open problem dispute dialog     
+        */
+        _openDisputeHistoryDialog: function () {
+
+
+            var t = this;
+
+            this._setDisputeHistory();
+
+            this.oDisputeHistoryFragment = sap.ui.xmlfragment("zslpmmyprb.view.DisputeHistory", this);
+
+            this.getView().addDependent(this.oDisputeHistoryFragment);
+
+            this.oDisputeHistoryFragment.open();
+
+            var oDisputeHistory = new sap.ui.model.json.JSONModel({
+
+                DisputeHistoryList: t.oDisputeHistory
+
+            });
+
+            sap.ui.getCore().byId("DisputeHistoryTable").setModel(oDisputeHistory, "DisputeHistoryModel");
+
+        },
+
+
+        /*
+        * Open problem dispute     
+        */
+        _openProblemDispute: function () {
+
+            var t = this,
+                sText = this.getResourceBundle().getText("confirmDisputeOpening");
+
+            sharedLibrary.confirmAction(sText, function () {
+
+                sharedLibrary.callFunctionImport(
+                    'openProblemDispute',
+                    t.getResourceBundle().getText("problemUpdateFailure"),
+                    t,
+                    'GET',
+                    { 'Guid': t.Guid },
+                    true,
+                    function (response) {
+
+                        t._deactivateEditMode();
+
+                        t._refreshView();
+
+                        t.getView().byId("textsList").getBinding("items").refresh();
+
+                        t._refreshListFromDetail(t.ObjectId);
+
+                    }
+                );
+            });
+        },
 
         /*
         * Set text types constants        
