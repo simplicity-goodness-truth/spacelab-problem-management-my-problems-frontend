@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <Dialog id="SLAIrtHistoryDialog" title="{i18n>disputeHistoryDialog}" contentWidth="800px" contentHeight="300px" draggable="true">
+        <Table id="DisputeHistoryTable" width="auto" 
+            items="{
+                path: 'DisputeHistoryModel>/DisputeHistoryList',
+                sorter: {
+                    path: 'UpdateTimestamp',
+                    descending: false
+                }
+            }">
+            <columns>
+                <Column id="UpdateTimestamp" width="65%">
+                    <Text text="{i18n>updateTimestamp}" id="updateTimestampLabel" />
+                </Column>
+                <Column id="UserName" width="20%">
+                    <Text text="{i18n>userName}" id="UserNameLabel"/>
+                </Column>
+                <Column id="DisputeOpen" width="15%">
+                    <Text text="{i18n>disputeOpen}" id="disputeOpenLabel" />
+                </Column>
+            </columns>
+            <items>
+                <ColumnListItem id="IrtHistoryRecord">
+                    <cells>
+                        <Text text="{DisputeHistoryModel>UpdateTimestamp}" />
+                    </cells>
+                    <cells>
+                        <Text text="{DisputeHistoryModel>UserName}" />
+                    </cells>
+                    <cells>
+                        <Text text="{DisputeHistoryModel>DisputeOpen}" />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+        <buttons>
+            <Button text="{i18n>Ok}" press="onCloseDisputeHistoryDialog" id="buttonCloseDisputeHistoryDialog"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

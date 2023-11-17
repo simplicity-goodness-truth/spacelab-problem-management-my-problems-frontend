@@ -2,13 +2,13 @@
     <semantic:SemanticPage id="listPage" preserveHeaderStateOnScroll="true" toggleHeaderOnTitleClick="false">
         <semantic:titleHeading>
             <VBox>
-            <Title id="listPageTitle" text="{listView>/title}" level="H2" />
+                <Title id="listPageTitle" text="{listView>/title}" level="H2" />
                 <HBox>
-                <Text text="{ path: 'runtimeModel>/SystemUser/FullName'}" id="systemUserName" class="sapUiTinyMarginEnd" />
+                    <Text text="{ path: 'runtimeModel>/SystemUser/FullName'}" id="systemUserName" class="sapUiTinyMarginEnd" />
                     <Text text="/" width="100%" id="subHeaderSlash" class="sapUiTinyMarginEnd" />
                     <Text text="{ path: 'runtimeModel>/SystemUser/CompanyName'}" id="systemUserCompanyName" />
-                    </HBox>
-                    </VBox>
+                </HBox>
+            </VBox>
         </semantic:titleHeading>
         <semantic:content>
             <!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
@@ -55,11 +55,12 @@
                     <ObjectListItem type="Navigation" press=".onSelectionChange" 
                         title="{Description}" intro="{ObjectId}" >
                         <attributes>
-                            
                             <ObjectAttribute id="__attribute1" text="{StatusText}" />
-                            <ObjectAttribute id="__attribute2" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />                            
-       
+                            <ObjectAttribute id="__attribute2" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />
                         </attributes>
+                        <firstStatus>
+                            <ObjectStatus icon="sap-icon://compare" state="Error" visible="{= ${IsDisputeOpen} ? true : false }" id="disputeOpenIcon" />
+                        </firstStatus>
                     </ObjectListItem>
                 </items>
             </List>

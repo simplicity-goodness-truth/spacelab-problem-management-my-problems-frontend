@@ -15,7 +15,7 @@ sap.ui.define([
         * Get text field types to validate vulnerabilities        
         */
 
-        getTextFieldTypesToValidateVulnerabilities: function() {
+        getTextFieldTypesToValidateVulnerabilities: function () {
 
             return textFieldTypesToValidateVulnerabilities.fieldTypes;
 
@@ -161,7 +161,7 @@ sap.ui.define([
         removeEntity: function (sPath, sErroneousExecutionText, oView, bAsync, bShowErrorMessage, callback) {
 
             var sODataPath = this.getODataPath(oView),
-                oModel = new sap.ui.model.odata.ODataModel(sODataPath, true);              
+                oModel = new sap.ui.model.odata.ODataModel(sODataPath, true);
 
             oModel.remove(sPath, {
                 async: bAsync,
@@ -275,8 +275,8 @@ sap.ui.define([
 
                 var oColumn = oColumns[k];
 
-                if ( oTableTemplate.getCells()[k].getBindingInfo('text')) {
-                   
+                if (oTableTemplate.getCells()[k].getBindingInfo('text')) {
+
                     aCols.push({
                         property: oTableTemplate.getCells()[k].getBindingInfo('text').parts[0].path,
                         label: oColumn.getHeader().getText(),
@@ -285,8 +285,8 @@ sap.ui.define([
 
                 }
 
-                if ( oTableTemplate.getCells()[k].getBindingInfo('state')) {
-                   
+                if (oTableTemplate.getCells()[k].getBindingInfo('state')) {
+
                     aCols.push({
                         property: oTableTemplate.getCells()[k].getBindingInfo('state').parts[0].path,
                         label: oColumn.getHeader().getText(),
@@ -506,6 +506,50 @@ sap.ui.define([
             return sUrlFixed;
 
         },
+
+        /**
+         * Call SAP NetWeaver Gateway Function Import
+         */
+
+        callFunctionImport: function (sFunctionName, sErroneousExecutionText, oView, sMethod, oParameters, bShowErrorMessage, callback) {
+
+            var sODataPath = this.getODataPath(oView),
+                oModel = new sap.ui.model.odata.ODataModel(sODataPath, true);
+
+            oModel.callFunction(sFunctionName,                
+                {
+                    method: sMethod,
+                    urlParameters: oParameters,     
+                    success: function (oData, response) {
+                        
+                        callback(response);
+
+                    },
+
+                    error: function (oError) {
+
+                        var sMessage;
+
+                        if (oError.response) {
+                            sMessage = JSON.parse(oError.response.body).error.message.value;
+                        }
+
+                        if (sErroneousExecutionText) {
+                            sMessage = sErroneousExecutionText + ':\n' + sMessage;
+                        }
+
+                        if (bShowErrorMessage) {
+                            sap.m.MessageBox.error(sMessage);
+                        } else {
+                            callback(sMessage);
+                        }
+
+                    }
+            
+              }
+            ); // oModel.callFunction
+        },
+
 
     };
 });

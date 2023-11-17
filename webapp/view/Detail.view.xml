@@ -8,6 +8,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
         <semantic:headerContent>
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemStatusTitle}: {StatusText}" id="fieldStatus" />
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemPriorityTitle}: {PriorityText}" id="fieldPriority" visible="{= ${ShowPriorities} ? true: false }"/>
+            <ObjectStatus icon="sap-icon://compare"  state="Error" visible="{= ${IsDisputeOpen} ? true : false }" id="disputeOpenIcon" 
+                press="onPressDisputeOpenIcon" active="true"/>
         </semantic:headerContent>
         <semantic:content>
             <IconTabBar id="iconTabBar">
@@ -131,27 +133,27 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
                                     <ColumnListItem id="tableProblemDetailsItemSLAIrtTimestamp">
                                         <cells>
                                             <Text text="{i18n>SLAIrtTimestamp}" width="100%" id="tableProblemDetailsLabelSLAIrtTimestamp" />
-                                                <HBox id="tableProblemDetailsItemSLAIrtHBox">                                               
-                                                    <ObjectStatus 
+                                            <HBox id="tableProblemDetailsItemSLAIrtHBox">
+                                                <ObjectStatus 
                                                     text="{SLAIrtTimestamp}" 	
                                                     state="{= ${IrtSLAOnHold}  ? 'Information' : ${SLAIrtIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
                                                     icon="{= ${FirstReactionDate}  ? 'sap-icon://complete' : ${IrtSLAOnHold} ? 'sap-icon://pause' : 'sap-icon://pending' }"
                                                     id="SLAIrtPercObjectStatus"/>
-                                                </HBox>
+                                            </HBox>
                                         </cells>
-                                    </ColumnListItem>                                    
+                                    </ColumnListItem>
                                     <ColumnListItem id="tableProblemDetailsItemSLAMptTimestamp">
                                         <cells>
                                             <Text text="{i18n>SLAMptTimestamp}" width="100%" id="tableProblemDetailsLabelSLAMptTimestamp" />
-                                                <HBox id="tableProblemDetailsItemSLAMptHBox">                                               
-                                                    <ObjectStatus								
+                                            <HBox id="tableProblemDetailsItemSLAMptHBox">
+                                                <ObjectStatus								
                                                     text="{SLAMptTimestamp}"			
                                                     state="{= ${MptSLAOnHold}  ? 'Information' : ${SLAMptIconBsp} === 'NOTDUE' ? 'Success' : 'Error' }" 
                                                     icon="{= ${Status} === 'E0008' || ${Status} === 'E0010'? 'sap-icon://complete' : ${MptSLAOnHold} ? 'sap-icon://pause' : 'sap-icon://pending' }"
                                                     id="SLAMptPercObjectStatus"/>
-                                                </HBox>
+                                            </HBox>
                                         </cells>
-                                    </ColumnListItem>                                  
+                                    </ColumnListItem>
                                 </items>
                             </Table>
                         </content>
@@ -171,6 +173,8 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
             <Button text="{i18n>buttonRequesterConfirm}" press="onPressRequesterConfirm" id="buttonRequesterConfirm"    visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterConfirmEnabled}  ? true: false }" icon="sap-icon://sys-enter"/>
             <Button text="{i18n>buttonRequesterReply}" press="onPressRequesterReply" id="buttonRequesterReply"   
                 visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterReplyEnabled} ? true: false }" icon="sap-icon://response"/>
+            <Button text="{i18n>buttonRequesterOpenDispute}" press="onPressRequesterOpenDispute" id="buttonRequesterOpenDispute"   
+                    visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterOpenDisputeEnabled} ? true: false }" icon="sap-icon://compare"/>
             <Button text="{i18n>buttonRequesterSaveAndReply}" press="onPressRequesterSaveAndReply" id="buttonRequesterSaveAndReply"   visible="{= ${runtimeModel>/editModeActive} ? true : false }"
                 icon="sap-icon://save" />
             <Button text="{i18n>buttonRequesterExitFromReplyMode}" press="onPressRequesterExitFromReplyMode" id="buttonRequesterExitFromReplyMode"  visible="{= ${runtimeModel>/editModeActive} ? true : false }" icon="sap-icon://decline"/>
