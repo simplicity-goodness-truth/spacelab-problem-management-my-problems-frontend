@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m"  xmlns:f="sap.ui.layout.form">
+
+<Dialog id="problemDisputeCommentDialog" title="{i18n>problemDisputeCommentDialog}">
+    <VBox class="sapUiSmallMargin">
+        <f:SimpleForm id="SimpleFormDisplay_1" editable="false" layout="ResponsiveGridLayout"  labelSpanXL="2"
+            labelSpanL="2" labelSpanM="3" labelSpanS="5" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0"
+            columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+            <f:content>					
+              
+                <FlexBox direction="Column" alignItems="Start">                     
+                    <TextArea id="problemDisputeCommentDialogText" cols="45" rows="15" placeholder="{i18n>enterProblemDisputeCommentText}"/>
+
+                    </FlexBox>
+            </f:content>
+        </f:SimpleForm>
+    </VBox>
+    <buttons>
+        <Button text="{i18n>Ok}" press="onProblemDisputeCommentDialogEntered"/>
+        <Button text="{i18n>Cancel}" press="onCloseProblemDisputeCommentDialog"/>
+    </buttons>
+</Dialog>
+
+</core:FragmentDefinition>

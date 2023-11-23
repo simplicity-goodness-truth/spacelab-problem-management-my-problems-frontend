@@ -59,7 +59,9 @@
                             <ObjectAttribute id="__attribute2" text="{ path: 'PostingDate', type: 'sap.ui.model.type.Date', formatOptions: { style: 'long'} }" />
                         </attributes>
                         <firstStatus>
-                            <ObjectStatus icon="sap-icon://compare" state="Error" visible="{= ${IsDisputeOpen} ? true : false }" id="disputeOpenIcon" />
+                            <ObjectStatus icon="sap-icon://compare" state="{= ${DisputeStatus} === 'O' ? 'Error' : 'None' }" 
+                            visible="{= ${DisputeStatus} !== '' ? true : false }"
+                            id="disputeOpenIcon" />      
                         </firstStatus>
                     </ObjectListItem>
                 </items>
