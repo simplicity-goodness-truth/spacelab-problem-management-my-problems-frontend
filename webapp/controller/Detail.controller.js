@@ -75,6 +75,58 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+        * Processor pressed OK inside dispute comment dialog
+        */
+        onProblemDisputeCommentDialogEntered: function () {
+
+            var t = this,
+                sDisputeCommentText = this._getProblemDisputeDialogText();
+
+            if (sDisputeCommentText.length != '0') {
+
+                t._destroyProblemDisputeComment();
+
+                var sTdid = t.textTypes.reply;
+
+                t._createProblemText(t.Guid, sTdid, sDisputeCommentText, function () {
+
+                    switch (t.problemDisputeAction) {
+
+                        case 'Open':
+
+                            t._executeProblemDisputeOpening();
+
+                            break;
+
+                    }
+
+                });
+
+            } else {
+
+                switch (t.problemDisputeAction) {
+
+                    case 'Open':
+
+                        sap.m.MessageBox.error(t.getResourceBundle().getText("disputeOpeningCommentMissing"));
+
+                        break;
+
+                }
+
+            }
+
+        },
+
+        /**
+        * Processor pressed Cancel inside dispute comment dialog
+        */
+        onCloseProblemDisputeCommentDialog: function () {
+
+            this._destroyProblemDisputeComment();
+        },
+
+        /**
         * Requester pressed a dispute history icon
         */
         onPressDisputeOpenIcon: function () {
@@ -276,6 +328,75 @@ sap.ui.define([
         /* =========================================================== */
 
         /**
+        * Get problem dispute dialog text
+        */
+        _getProblemDisputeDialogText: function () {
+
+            var sProblemDisputeDialogText = this.oProblemDisputeCommentFragment.getContent()[0].getItems()[0].getContent()[0].getItems()[0].getValue();
+
+            // Vulnerabilities clearing
+
+            sProblemDisputeDialogText = this._clearTextFieldVulnerabilities(sProblemDisputeDialogText, this.oProblemDisputeCommentFragment.getContent()[0].getItems()[0].getContent()[0].getItems()[0].__proto__.getMetadata()._sClassName);
+
+            return sProblemDisputeDialogText;
+
+        },
+
+
+        /*
+        * Open problem dispute comment dialog     
+        */
+        _openProblemDisputeCommentDialog: function () {
+
+            this._setDisputeHistory();
+
+            this.oProblemDisputeCommentFragment = sap.ui.xmlfragment("zslpmmyprb.view.ProblemDisputeComment", this);
+
+            this.getView().addDependent(this.oProblemDisputeCommentFragment);
+
+            this.oProblemDisputeCommentFragment.open();
+
+        },
+
+
+        /**
+        * Execute problem dispute opening
+        */
+        _executeProblemDisputeOpening: function () {
+
+            var t = this;
+
+            sharedLibrary.callFunctionImport(
+                'openProblemDispute',
+                t.getResourceBundle().getText("problemUpdateFailure"),
+                t,
+                'GET',
+                { 'Guid': t.Guid },
+                true,
+                function (response) {
+
+                    t._deactivateEditMode();
+
+                    t._refreshView();
+
+                    t.getView().byId("textsList").getBinding("items").refresh();
+
+                    t._refreshListFromDetail(t.ObjectId);
+
+                }
+            );
+
+        },
+
+        /**
+        * Destroy Problem Dispute Comment dialog
+        */
+        _destroyProblemDisputeComment: function () {
+
+            this.oProblemDisputeCommentFragment.destroy(true);
+        },
+
+        /**
         * Destroy Dispute History dialog
         */
         _destroyDisputeHistoryDialog: function () {
@@ -325,7 +446,6 @@ sap.ui.define([
 
         },
 
-
         /*
         * Open problem dispute     
         */
@@ -336,25 +456,24 @@ sap.ui.define([
 
             sharedLibrary.confirmAction(sText, function () {
 
-                sharedLibrary.callFunctionImport(
-                    'openProblemDispute',
-                    t.getResourceBundle().getText("problemUpdateFailure"),
-                    t,
-                    'GET',
-                    { 'Guid': t.Guid },
-                    true,
-                    function (response) {
+                t.problemDisputeAction = 'Open';
 
-                        t._deactivateEditMode();
+                t._openProblemDisputeCommentDialog();
 
-                        t._refreshView();
+                // sharedLibrary.callFunctionImport(
+                //     'openProblemDispute',
+                //     t.getResourceBundle().getText("problemUpdateFailure"),
+                //     t,
+                //     'GET',
+                //     { 'Guid': t.Guid },
+                //     true,
+                //     function (response) {
 
-                        t.getView().byId("textsList").getBinding("items").refresh();
+                //         t._refreshApplicationAndSwitchOffEditMode();
 
-                        t._refreshListFromDetail(t.ObjectId);
+                //     }
+                // );
 
-                    }
-                );
             });
         },
 

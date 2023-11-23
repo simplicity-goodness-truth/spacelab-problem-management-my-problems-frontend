@@ -2,6 +2,10 @@
 xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
     <semantic:SemanticPage id="detailPage" busy="{detailView>/busy}" busyIndicatorDelay="{detailView>/delay}"
         showFooter="{= ${RequesterWithdrawEnabled} || ${RequesterUpdateEnabled} ||  ${RequesterConfirmEnabled} || ${RequesterReplyEnabled} ? true : false }" toggleHeaderOnTitleClick="false" headerPinnable="false">
+        <semantic:titleCustomTextActions>
+            <Button text="{i18n>buttonRequesterOpenDispute}" press="onPressRequesterOpenDispute" id="buttonRequesterOpenDispute"   
+                visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterOpenDisputeEnabled} ? true: false }" icon="sap-icon://compare"/>
+        </semantic:titleCustomTextActions>
         <semantic:titleHeading>
             <Title text="{ObjectId}: {Description}" level="H2" id="fieldTitle" />
         </semantic:titleHeading>
@@ -9,7 +13,10 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemStatusTitle}: {StatusText}" id="fieldStatus" />
             <ObjectAttribute xmlns="sap.m" text="{i18n>problemPriorityTitle}: {PriorityText}" id="fieldPriority"
                 visible="{= ${ShowPriorities} ? true: false }"/>
-            <ObjectStatus icon="sap-icon://compare"  state="Error" visible="{= ${IsDisputeOpen} ? true : false }" id="disputeOpenIcon" 
+            <ObjectStatus icon="sap-icon://compare"  
+            state="{= ${DisputeStatus} === 'O' ? 'Error' : 'None' }" 
+            visible="{= ${DisputeStatus} !== '' ? true : false }" 
+            id="disputeOpenIcon" 
                 press="onPressDisputeOpenIcon" active="true"/>
         </semantic:headerContent>
         <semantic:content>
@@ -184,14 +191,12 @@ xmlns:upload="sap.m.upload" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt">
         <semantic:exitFullScreenAction>
             <semantic:ExitFullScreenAction id="exitFullScreen" visible="{= !${device>/system/phone} &amp;&amp; ${appView>/actionButtonsInfo/midColumn/fullScreen}}" press=".toggleFullScreen" />
         </semantic:exitFullScreenAction>
-        <semantic:footerCustomActions>
+        <semantic:footerCustomActions>            
             <Button text="{i18n>buttonRequesterWithdraw}" press="onPressRequesterWithdraw" id="buttonRequesterWithdraw" visible="{= ${RequesterWithdrawEnabled}  ? true : false }" icon="sap-icon://sys-cancel"/>
             <Button text="{i18n>buttonRequesterUpdate}" press="onPressRequesterUpdate" id="buttonRequesterUpdate"  visible="{= ${RequesterUpdateEnabled}  ? true : false }" icon="sap-icon://comment"/>
             <Button text="{i18n>buttonRequesterConfirm}" press="onPressRequesterConfirm" id="buttonRequesterConfirm"    visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterConfirmEnabled}  ? true: false }" icon="sap-icon://sys-enter"/>
             <Button text="{i18n>buttonRequesterReply}" press="onPressRequesterReply" id="buttonRequesterReply"   
                 visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterReplyEnabled} ? true: false }" icon="sap-icon://response"/>
-            <Button text="{i18n>buttonRequesterOpenDispute}" press="onPressRequesterOpenDispute" id="buttonRequesterOpenDispute"   
-                    visible="{= ${runtimeModel>/editModeActive} ? false : ${RequesterOpenDisputeEnabled} ? true: false }" icon="sap-icon://compare"/>
             <Button text="{i18n>buttonRequesterSaveAndReply}" press="onPressRequesterSaveAndReply" id="buttonRequesterSaveAndReply"   visible="{= ${runtimeModel>/editModeActive} ? true : false }"
                 icon="sap-icon://save" />
             <Button text="{i18n>buttonRequesterExitFromReplyMode}" press="onPressRequesterExitFromReplyMode" id="buttonRequesterExitFromReplyMode"  visible="{= ${runtimeModel>/editModeActive} ? true : false }" icon="sap-icon://decline"/>
