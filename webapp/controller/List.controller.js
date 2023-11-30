@@ -173,6 +173,7 @@ sap.ui.define([
          * @public
          */
         onSearch: function (oEvent) {
+
             if (oEvent.getParameters().refreshButtonPressed) {
                 // Search field's 'refresh' button has been pressed.
                 // This is visible if you select any list item.
@@ -182,22 +183,39 @@ sap.ui.define([
                 return;
             }
 
-            var sQuery = oEvent.getParameter("query");
+            var sQuery = oEvent.getParameter("query"),    
+                oBindingInfo = this._oList.getBindingInfo("items");
+
+                if (!oBindingInfo.parameters) {
+                    oBindingInfo.parameters = {};
+                }
 
             if (sQuery) {
 
-                // Search by description text 
+                if (!oBindingInfo.parameters.custom) {
+                    oBindingInfo.parameters.custom = {};
+                }
 
-                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.EQ, sQuery)];
+                // Adding a search parameter
+              
+                oBindingInfo.parameters.custom.search = sQuery;
 
-                // Search by free text  in communication
+                this._oList.bindItems(oBindingInfo);
 
-                this._oListFilterState.aSearch = [new Filter("Note", FilterOperator.EQ, sQuery)];
             } else {
-                this._oListFilterState.aSearch = [];
-            }
-            this._applyFilterSearch();
+                                
+                    oBindingInfo.parameters.custom = {};
+                            
+                    this._oList.bindItems(oBindingInfo);
 
+                    // Restoring filtering if it was used
+
+                    if ( this._oListFilterState.aFilter ) {
+
+                        this._applyFilterSearch();
+
+                    }                   
+            }
         },
 
         /**
@@ -515,9 +533,9 @@ sap.ui.define([
         _applyFilterSearch: function () {
             var aFilters = this._oListFilterState.aSearch.concat(this._oListFilterState.aFilter),
                 oViewModel = this.getModel("listView");
-
-
+                
             this._oList.getBinding("items").filter(aFilters, "Application");
+
             // changes the noDataText of the list in case there are no filter results
             if (aFilters.length !== 0) {
                 oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("listListNoDataWithFilterOrSearchText"));
