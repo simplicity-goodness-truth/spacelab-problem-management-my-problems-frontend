@@ -169,6 +169,7 @@ sap.ui.define([
          * @public
          */
         onSearch: function (oEvent) {
+ 
             if (oEvent.getParameters().refreshButtonPressed) {
                 // Search field's 'refresh' button has been pressed.
                 // This is visible if you select any list item.
@@ -178,23 +179,39 @@ sap.ui.define([
                 return;
             }
 
-            var sQuery = oEvent.getParameter("query");
+            var sQuery = oEvent.getParameter("query"),    
+                oBindingInfo = this._oList.getBindingInfo("items");
+
+                if (!oBindingInfo.parameters) {
+                    oBindingInfo.parameters = {};
+                }
 
             if (sQuery) {
 
-                // Search by description text 
+                if (!oBindingInfo.parameters.custom) {
+                    oBindingInfo.parameters.custom = {};
+                }
 
-                this._oListFilterState.aSearch = [new Filter("Description", FilterOperator.EQ, sQuery)];
+                // Adding a search parameter
+              
+                oBindingInfo.parameters.custom.search = sQuery;
 
-                // Search by free text  in communication
-
-                this._oListFilterState.aSearch = [new Filter("Note", FilterOperator.EQ, sQuery)];
+                this._oList.bindItems(oBindingInfo);
 
             } else {
-                this._oListFilterState.aSearch = [];
-            }
-            this._applyFilterSearch();
+                                
+                    oBindingInfo.parameters.custom = {};
+                            
+                    this._oList.bindItems(oBindingInfo);
 
+                    // Restoring filtering if it was used
+
+                    if ( this._oListFilterState.aFilter ) {
+
+                        this._applyFilterSearch();
+
+                    }                   
+            }
         },
 
         /**
